@@ -279,10 +279,11 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
 ///////////////////////////////////////////////////////////
 
 router.post("/getSearchedFields", (req, res, next) => {
-  Statement.find({ field: { $in: req.body, approved: true } })
+  Statement.find({ field: { $in: req.body } })
     .exec()
     .then((result) => {
-      res.status(200).json(result);
+      newResult = result.filter((approved) => Object.keys(approved) !== true);
+      res.status(200).json(newResult);
     })
     .catch((err) => {
       res.status(500).json({
