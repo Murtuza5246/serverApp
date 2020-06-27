@@ -8,8 +8,6 @@ const mongoose = require("mongoose");
 
 const app = express();
 app.use(express.static("public"));
-const productRoutes = require("./api/routes/product.js");
-const ordersRoutes = require("./api/routes/orders");
 const questionRoutes = require("./api/routes/question");
 const userRoutes = require("./api/routes/user");
 const pStringRoutes = require("./api/routes/pString");
