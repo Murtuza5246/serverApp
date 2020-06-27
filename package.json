@@ -7,8 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
     "eslint": "eslint ./",
-    "eslint-fix": "eslint ./ --fix",
-    "build": "webpack"
+    "eslint-fix": "eslint ./ --fix"
   },
   "keywords": [],
   "author": "",
