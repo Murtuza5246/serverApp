@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const Order = require("../model/order");
 const Product = require("../model/product");
-const checkAuth = require("../middleware/check-auth");
+const checkAuth = require("../middleware/check-auth.js");
 
 // Handle incoming GET requests to /orders
 router.get("/", checkAuth, (req, res, next) => {
