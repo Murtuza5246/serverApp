@@ -75,7 +75,7 @@ router.get("/", checkAuth, (req, res, next) => {
             _id: doc._id,
             request: {
               type: "GET",
-              url: "http://localhost:4000/statements/" + doc._id,
+              url: "http://problemspotter.com/statements/" + doc._id,
             },
           };
         }),
@@ -279,7 +279,7 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
 ///////////////////////////////////////////////////////////
 
 router.post("/getSearchedFields", (req, res, next) => {
-  Statement.find({ field: { $in: req.body } })
+  Statement.find({ field: { $in: req.body } }, { approved: true })
     .exec()
     .then((result) => {
       res.status(200).json(result);

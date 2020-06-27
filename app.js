@@ -49,6 +49,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "/uploads")));
 
 app.use("/statements", statementRoutes);
 app.use("/user", userRoutes);
