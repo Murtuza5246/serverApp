@@ -97,7 +97,7 @@ router.get("/", checkAuth, (req, res, next) => {
 // //////////////////
 router.post(
   "/compose",
-  // checkAuth,
+  checkAuth,
   upload.single("statementImage"),
   (req, res, next) => {
     const statement = new Statement({
