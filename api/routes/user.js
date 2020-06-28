@@ -246,8 +246,8 @@ router.post("/login", (req, res, next) => {
             lName: user[0].lName,
           });
         }
-        res.status(401).json({
-          message: "Auth Failed after password compare",
+        res.status(200).json({
+          message: "Auth failed , check your password and email",
         });
       });
     })
