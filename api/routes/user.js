@@ -4,34 +4,34 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
-const Upload = require("../model/upload");
+const upload = require("./imageUploadEngine");
 
 const User = require("../model/user");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/profile");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads/profile");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + file.originalname);
+//   },
+// });
 
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-  fileFilter: fileFilter,
-});
+// const fileFilter = (req, file, cb) => {
+//   // reject a file
+//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//   }
+// };
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 1024 * 1024 * 5,
+//   },
+//   fileFilter: fileFilter,
+// });
 
 //////////////////////////////////////////////
 router.post("/signup", upload.single("profileImage"), (req, res, next) => {
@@ -51,7 +51,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
           } else {
             const user = new User({
               _id: mongoose.Types.ObjectId(),
-              profileImage: req.file.path,
+              profileImage: req.file.filename,
               authType: req.body.authType,
               email: req.body.email,
               password: hash,
@@ -186,7 +186,7 @@ router.patch(
     const id = req.params.userId;
     User.updateOne(
       { _id: id },
-      { $set: { profileImage: req.file.path } },
+      { $set: { profileImage: req.file.filename } },
       { upsert: true }
     )
       .exec()

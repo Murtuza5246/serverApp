@@ -8,25 +8,25 @@ const Statement = require("../model/statements");
 const fileUpload = require("express-fileupload");
 const Upload = require("../model/upload");
 const app = express();
-
+const upload = require("./imageUploadEngine");
 ////////////////////////////////////////////////
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + file.originalname);
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "./uploads/");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + file.originalname);
+//   },
+// });
 
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
+// const fileFilter = (req, file, cb) => {
+//   // reject a file
+//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//   }
+// };
 // const user = process.env.MONGO_PS;
 // const password = process.env.MONGO_USER;
 // const DB = process.env.MONGO_DB;
@@ -50,13 +50,13 @@ const fileFilter = (req, file, cb) => {
 //     });
 //   },
 // });
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 500,
-  },
-  fileFilter: fileFilter,
-});
+// const upload = multer({
+//   storage: storage,
+//   limits: {
+//     fileSize: 1024 * 1024 * 500,
+//   },
+//   fileFilter: fileFilter,
+// });
 
 //////////////////////////////////////////////////////////////////////
 
@@ -97,7 +97,7 @@ router.get("/", checkAuth, (req, res, next) => {
 // //////////////////
 router.post(
   "/compose",
-  checkAuth,
+  // checkAuth,
   upload.single("statementImage"),
   (req, res, next) => {
     const statement = new Statement({
@@ -110,17 +110,17 @@ router.post(
       email: req.body.email,
       profileImage: req.body.profileImage,
       // imageId: req.body.imageId,
-      statementImage: req.file.path,
+      statementImage: req.file.filename,
       date: req.body.date,
       shareEmail: req.body.shareEmail,
       time: req.body.time,
       organization: req.body.organization,
       organizationLink: req.body.organizationLink,
-      approved: req.body.approval,
+      approved: false,
       link: req.body.link,
       linkTitle: req.body.linkTitle,
     });
-    res.status(201).send();
+    // res.status(201).send();
     statement
       .save()
       .then((result) => {
