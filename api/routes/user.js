@@ -210,7 +210,7 @@ router.post("/login", (req, res, next) => {
   User.find({ email: req.body.email })
     .then((user) => {
       if (user.length < 1) {
-        return res.status(401).json({
+        return res.status(200).json({
           message: "Auth failed",
         });
       }
@@ -218,7 +218,7 @@ router.post("/login", (req, res, next) => {
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
-            message: "Auth failed in password compare",
+            message: "Auth Failed Check Details",
           });
         }
 
