@@ -39,7 +39,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
     .exec()
     .then((user) => {
       if (user.length >= 1) {
-        return res.status(401).json({
+        return res.status(200).json({
           message: "User already exists",
         });
       } else {

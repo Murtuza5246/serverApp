@@ -37,9 +37,13 @@ router.patch("/private/:pString", (req, res, next) => {
     .then((result) => {
       const length = result.length !== 0;
       if (length) {
-        PString.updateOne({ pString: "used" }).then().catch();
+        PString.updateOne({ pString: string }, { $set: { pString: "used" } })
+          .then()
+          .catch();
+        res.status(200).json(length);
+      } else {
+        res.status(401).json(false);
       }
-      res.status(200).json(length);
     })
     .catch();
 });
