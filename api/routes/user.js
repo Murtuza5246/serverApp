@@ -217,8 +217,8 @@ router.post("/login", (req, res, next) => {
 
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
-          return res.status(401).json({
-            message: "Auth Failed Check Details",
+          return res.status(200).json({
+            message: "Password or Email is wrong",
           });
         }
 
