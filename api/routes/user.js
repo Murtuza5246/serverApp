@@ -5,33 +5,26 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const upload = require("./imageUploadEngine");
-
+const GridFsStorage = require("multer-gridfs-storage");
+const Grid = require("gridfs-stream");
 const User = require("../model/user");
+const Statement = require("../model/statements");
+const Question = require("../model/question");
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./uploads/profile");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + file.originalname);
-//   },
-// });
+const user = process.env.MONGO_PS;
+const password = process.env.MONGO_USER;
+const DB = process.env.MONGO_DB;
+const mongoURI = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mongodb.net:27017,cluster020-shard-00-01-ndanr.mongodb.net:27017,cluster020-shard-00-02-ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true`;
+const conn = mongoose.createConnection(mongoURI);
 
-// const fileFilter = (req, file, cb) => {
-//   // reject a file
-//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-//     cb(null, true);
-//   } else {
-//     cb(null, false);
-//   }
-// };
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 1024 * 1024 * 5,
-//   },
-//   fileFilter: fileFilter,
-// });
+// Init gfs
+let gfs;
+
+conn.once("open", () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("uploads");
+});
 
 //////////////////////////////////////////////
 router.post("/signup", upload.single("profileImage"), (req, res, next) => {
@@ -52,6 +45,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
             const user = new User({
               _id: mongoose.Types.ObjectId(),
               profileImage: req.file.filename,
+              profileImageId: req.file.id,
               authType: req.body.authType,
               email: req.body.email,
               password: hash,
@@ -184,9 +178,21 @@ router.patch(
   upload.single("profileImage"),
   (req, res, next) => {
     const id = req.params.userId;
+    console.log(req.file);
+    User.findOne({ _id: id })
+      .exec()
+      .then((result1) => {
+        console.log(result1);
+
+        gfs.remove({ _id: result1.profileImageId, root: "uploads" });
+      })
+      .catch();
+
     User.updateOne(
       { _id: id },
-      { $set: { profileImage: req.file.filename } },
+      {
+        $set: { profileImage: req.file.filename, profileImageId: req.file.id },
+      },
       { upsert: true }
     )
       .exec()
@@ -195,11 +201,55 @@ router.patch(
           message: "Photo updated",
         });
       })
+
       .catch((err) => {
         res.status(500).json({
           message: "Not Uploaded",
           error: err,
         });
+      });
+    Statement.updateMany(
+      {},
+      { $set: { "comments.$[i].profileImage": req.file.filename } },
+      { arrayFilters: [{ "i.userId": id }] }
+    )
+      .then((result) => {})
+      .catch((err) => {});
+    Question.updateMany(
+      { userId: id },
+      { $set: { profileImage: req.file.filename } },
+      { upsert: true }
+    )
+      .then((result) => {
+        // res.status(200).json({
+        //   message: "may be updated",
+        //   data: result,
+        //   file: req.file.filename,
+        // });
+      })
+      .catch((err) => {
+        // res.status(400).json({
+        //   error: err,
+        //   message: "not updated",
+        // });
+      });
+    Question.updateMany(
+      {},
+      { $set: { "comments.$[i].profileImage": req.file.filename } },
+      { arrayFilters: [{ "i.userId": id }] }
+    )
+      .then((result) => {
+        // res.status(200).json({
+        //   message: "may be updated",
+        //   data: result,
+        //   file: req.file.filename,
+        // });
+      })
+      .catch((err) => {
+        // res.status(400).json({
+        //   error: err,
+        //   message: "not updated",
+        // });
       });
   }
 );

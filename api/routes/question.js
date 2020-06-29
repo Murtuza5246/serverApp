@@ -7,7 +7,7 @@ const app = express();
 
 ////////////////////////////////////
 router.post("/new/ask", (req, res, next) => {
-  const { name, email, questionAsked, time, date } = req.body;
+  const { name, email, questionAsked, time, date, userId } = req.body;
 
   User.find({ email: email })
     .then((result) => {
@@ -21,6 +21,7 @@ router.post("/new/ask", (req, res, next) => {
           uploadedByName: name,
           uploadedByEmail: email,
           question: questionAsked,
+          userId: result[0]._id,
           profileImage: result[0].profileImage,
           date: date,
           time: time,

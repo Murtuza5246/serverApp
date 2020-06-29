@@ -28,6 +28,7 @@ const userSchema = mongoose.Schema({
   creationTime: { type: String },
   profileImage: { type: String },
   savedStatements: { type: Array },
+  profileImageId: { type: String },
   //TODO: MAKE DIFFERENT ENDPOINTS FOR EVER DIFFERENT USER FROM DROP DOWN CHOOSE FILES ACCORDING TO THAT END POINTS WILL GET CHANGED
 });
 

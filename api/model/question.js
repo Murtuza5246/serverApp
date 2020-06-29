@@ -10,6 +10,7 @@ const questionsSchema = mongoose.Schema({
   time: { type: String },
   date: { type: String },
   authType: { type: String, required: true },
+  userId: { type: String },
 });
 
 const Question = mongoose.model("Question", questionsSchema);
