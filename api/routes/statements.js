@@ -156,16 +156,19 @@ router.get("/admin/approved/:email", (req, res) => {
       console.log(err);
     });
 });
-router.patch("/updateFields/:id", (req, res) => {
-  const id = req.param.id;
+router.patch("/updateFields/:id", checkAuth, (req, res) => {
+  const id = req.params.id;
   const { updatedTitle, updatedContent } = req.body;
-  Statement.updateOne(
+  Statement.update(
     { _id: id },
     { $set: { title: updatedTitle, statement: updatedContent } }
   )
     .then((result) => {
       res.status(200).json({
         message: "Success",
+        updatedContent,
+        updatedTitle,
+        id,
       });
     })
     .catch((err) => {
