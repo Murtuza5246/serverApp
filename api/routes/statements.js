@@ -156,7 +156,24 @@ router.get("/admin/approved/:email", (req, res) => {
       console.log(err);
     });
 });
-
+router.patch("/updateFields/:id", (req, res) => {
+  const id = req.param.id;
+  const { updatedTitle, updatedContent } = req.body;
+  Statement.updateOne(
+    { _id: id },
+    { $set: { title: updatedTitle, statement: updatedContent } }
+  )
+    .then((result) => {
+      res.status(200).json({
+        message: "Success",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
 ///////////////////////////////////
 
 router.get("/pending", (req, res, next) => {
