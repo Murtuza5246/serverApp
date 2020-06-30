@@ -10,53 +10,6 @@ const Upload = require("../model/upload");
 const app = express();
 const upload = require("./imageUploadEngine");
 ////////////////////////////////////////////////
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./uploads/");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + file.originalname);
-//   },
-// });
-
-// const fileFilter = (req, file, cb) => {
-//   // reject a file
-//   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-//     cb(null, true);
-//   } else {
-//     cb(null, false);
-//   }
-// };
-// const user = process.env.MONGO_PS;
-// const password = process.env.MONGO_USER;
-// const DB = process.env.MONGO_DB;
-// const uri = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mongodb.net:27017,cluster020-shard-00-01-ndanr.mongodb.net:27017,cluster020-shard-00-02-ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true`;
-
-// const storage = new GridFsStorage({
-//   url: uri,
-//   file: (req, file) => {
-//     return new Promise((resolve, reject) => {
-//       crypto.randomBytes(100, (err, buf) => {
-//         if (err) {
-//           return reject(err);
-//         }
-//         const filename = file.originalname;
-//         const fileInfo = {
-//           filename: filename,
-//           bucketName: "ComposeFile",
-//         };
-//         resolve(fileInfo);
-//       });
-//     });
-//   },
-// });
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 1024 * 1024 * 500,
-//   },
-//   fileFilter: fileFilter,
-// });
 
 //////////////////////////////////////////////////////////////////////
 
@@ -75,18 +28,12 @@ router.get("/", checkAuth, (req, res, next) => {
             _id: doc._id,
             request: {
               type: "GET",
-              url: "http://problemspotter.com/statements/" + doc._id,
             },
           };
         }),
       };
-      //   if (docs.length >= 0) {
+
       res.status(200).json(response);
-      //   } else {
-      //       res.status(404).json({
-      //           message: 'No entries found'
-      //       });
-      //   }
     })
     .catch((err) => {
       res.status(500).json({
@@ -132,7 +79,6 @@ router.post(
             _id: result._id,
             request: {
               type: "GET",
-              url: "http://localhost:3000/products/" + result._id,
             },
           },
         });
