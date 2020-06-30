@@ -29,7 +29,6 @@ const userSchema = mongoose.Schema({
   profileImage: { type: String },
   savedStatements: { type: Array },
   profileImageId: { type: String },
-  //TODO: MAKE DIFFERENT ENDPOINTS FOR EVER DIFFERENT USER FROM DROP DOWN CHOOSE FILES ACCORDING TO THAT END POINTS WILL GET CHANGED
 });
 
 const Order = mongoose.model("User", userSchema);

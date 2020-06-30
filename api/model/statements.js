@@ -27,6 +27,7 @@ const statementsSchema = mongoose.Schema({
   actionAdminTime: { type: String },
   comments: { type: Array },
   link: { type: String },
+  userId: { type: String, required: true },
   linkTitle: { type: String },
 });
 

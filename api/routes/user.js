@@ -233,6 +233,13 @@ router.patch(
         //   message: "not updated",
         // });
       });
+    Statement.updateMany(
+      { userId: id },
+      { $set: { profileImage: req.file.filename } },
+      { upsert: true }
+    )
+      .then((result) => {})
+      .catch((err) => {});
     Question.updateMany(
       {},
       { $set: { "comments.$[i].profileImage": req.file.filename } },
