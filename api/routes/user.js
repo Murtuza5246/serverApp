@@ -217,8 +217,7 @@ router.patch(
       .catch((err) => {});
     Question.updateMany(
       { userId: id },
-      { $set: { profileImage: req.file.filename } },
-      { upsert: true }
+      { $set: { profileImage: req.file.filename } }
     )
       .then((result) => {
         // res.status(200).json({
@@ -235,8 +234,7 @@ router.patch(
       });
     Statement.updateMany(
       { userId: id },
-      { $set: { profileImage: req.file.filename } },
-      { upsert: true }
+      { $set: { profileImage: req.file.filename } }
     )
       .then((result) => {})
       .catch((err) => {});
