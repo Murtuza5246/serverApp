@@ -326,6 +326,29 @@ router.get("/adminProfileGetter", (req, res, next) => {
       error: err;
     });
 });
+/////////////////////////////////////////////
+
+router.get("/identifier/details/:id", (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  User.findById(id)
+    .then((result) => {
+      Statement.find({ userId: id })
+        .then((result1) => {
+          res.status(200).json({
+            userDetails: result,
+            StatementUploaded: result1,
+          });
+        })
+        .catch();
+    })
+    .catch((err) => {
+      res.status(404).json({
+        error: err,
+      });
+    });
+});
 
 ///////////////////////////////////////////////////////
 router.get("/savedStatemnets/:userId", (req, res, next) => {
