@@ -47,8 +47,7 @@ router.post(
   checkAuth,
   upload.array("statementImage", 10),
   (req, res, next) => {
-    console.log(req.files);
-
+    let keywordData = JSON.parse(req.body.keyword);
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
       identifier: req.body.identifier,
@@ -59,7 +58,7 @@ router.post(
       email: req.body.email,
       profileImage: req.body.profileImage,
       userId: req.body.userId,
-      keywords: req.body.keyword,
+      keywords: keywordData,
       statementImage: req.files,
       date: req.body.date,
       shareEmail: req.body.shareEmail,
@@ -100,6 +99,8 @@ router.post(
   checkAuth,
   upload.single("statementImage"),
   (req, res, next) => {
+    let keywordData = JSON.parse(req.body.keyword);
+
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
       identifier: req.body.identifier,
@@ -111,14 +112,13 @@ router.post(
       statementImage: "",
       shareEmail: req.body.shareEmail,
       profileImage: req.body.profileImage,
-      // imageId: req.body.imageId,
       date: req.body.date,
       time: req.body.time,
       userId: req.body.userId,
       organization: req.body.organization,
       organizationLink: req.body.organizationLink,
       approved: req.body.approval,
-      keywords: req.body.keyword,
+      keywords: keywordData,
       link: req.body.link,
     });
     statement
