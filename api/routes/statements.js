@@ -59,6 +59,7 @@ router.post(
       email: req.body.email,
       profileImage: req.body.profileImage,
       userId: req.body.userId,
+      keywords: req.body.keyword,
       statementImage: req.files,
       date: req.body.date,
       shareEmail: req.body.shareEmail,
@@ -117,6 +118,7 @@ router.post(
       organization: req.body.organization,
       organizationLink: req.body.organizationLink,
       approved: req.body.approval,
+      keywords: req.body.keyword,
       link: req.body.link,
     });
     statement

@@ -29,6 +29,7 @@ const statementsSchema = mongoose.Schema({
   link: { type: String },
   userId: { type: String, required: true },
   linkTitle: { type: String },
+  keywords: { type: Array },
 });
 
 const statement = mongoose.model("Statements", statementsSchema);
