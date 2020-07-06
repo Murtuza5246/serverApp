@@ -45,8 +45,10 @@ router.get("/", checkAuth, (req, res, next) => {
 router.post(
   "/compose",
   checkAuth,
-  upload.single("statementImage"),
+  upload.array("statementImage", 10),
   (req, res, next) => {
+    console.log(req.files);
+
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
       identifier: req.body.identifier,
@@ -57,7 +59,7 @@ router.post(
       email: req.body.email,
       profileImage: req.body.profileImage,
       userId: req.body.userId,
-      statementImage: req.file.filename,
+      statementImage: req.files,
       date: req.body.date,
       shareEmail: req.body.shareEmail,
       time: req.body.time,

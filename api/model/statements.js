@@ -15,7 +15,7 @@ const statementsSchema = mongoose.Schema({
   // imageId: { type: String },
   date: { type: String },
   time: { type: String },
-  statementImage: { type: String },
+  statementImage: { type: Array },
   organization: { type: String },
   organizationLink: { type: String },
   approved: { type: Boolean, required: true },
