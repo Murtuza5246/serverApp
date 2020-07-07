@@ -114,7 +114,9 @@ router.get("/image/:filename", (req, res) => {
       file.contentType === "image/jpeg" ||
       file.contentType === "image/png" ||
       file.contentType === "application/pdf" ||
-      file.contentType === "application/msword"
+      file.contentType === "application/msword" ||
+      file.contentType === "audio/mpeg" ||
+      file.contentType === "audio/*"
     ) {
       // Read output to browser
       const readstream = gfs.createReadStream(file.filename);

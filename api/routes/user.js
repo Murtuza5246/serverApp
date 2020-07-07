@@ -173,6 +173,22 @@ router.get("/details/:userId", (req, res, next) => {
 });
 //////////////////////////////////////////////
 
+router.post("/upload/sound", upload.single("sound"), (req, res) => {
+  console.log(req.file.filename);
+  if (req.file.filename) {
+    res.status(200).json({
+      message: "uploaded",
+      name: req.file,
+    });
+  } else {
+    res.status(500).json({
+      message: "Not uploaded",
+      name: req.file,
+    });
+  }
+});
+
+//////////////////////////////////////////////////////////
 router.patch(
   "/profile/:userId",
   upload.single("profileImage"),
