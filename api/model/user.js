@@ -29,6 +29,7 @@ const userSchema = mongoose.Schema({
   profileImage: { type: String },
   savedStatements: { type: Array },
   profileImageId: { type: String },
+  about: String,
 });
 
 const Order = mongoose.model("User", userSchema);

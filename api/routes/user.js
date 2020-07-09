@@ -16,6 +16,7 @@ const password = process.env.MONGO_USER;
 const DB = process.env.MONGO_DB;
 const mongoURI = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mongodb.net:27017,cluster020-shard-00-01-ndanr.mongodb.net:27017,cluster020-shard-00-02-ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true`;
 const conn = mongoose.createConnection(mongoURI);
+const checkAuth = require("../middleWare/check-auth");
 
 // Init gfs
 let gfs;
@@ -56,6 +57,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               cName: req.body.cName,
               cAddress: req.body.cAddress,
               city: req.body.city,
+              about: req.body.about,
               nState: req.body.nState,
               pCode: req.body.pCode,
               pString: req.body.pString,
@@ -79,6 +81,26 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
           }
         });
       }
+    });
+});
+
+////////////////////////////////
+
+router.patch("/update/about/:id/:about", checkAuth, (req, res) => {
+  const id = req.params.id;
+  console.log(req.body);
+
+  User.updateOne({ _id: id }, { $set: { about: req.params.about } })
+    .then((result) => {
+      res.status(200).json({
+        message: "Successfully updated.",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Something went wrong",
+        error: err,
+      });
     });
 });
 
@@ -140,7 +162,6 @@ router.get("/statement/profileFetcher/:userEmail", (req, res, next) => {
 //////////////////////////////////////
 router.patch("/statement/save/:userId", (req, res, next) => {
   const id = req.params.userId;
-  const arrayData = req.body;
   User.update({ _id: id }, { $set: { savedStatements: req.body } })
     .then((result) => {
       res.status(200).json({
