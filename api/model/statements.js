@@ -17,6 +17,8 @@ const statementsSchema = mongoose.Schema({
   time: { type: String },
   statementImage: { type: Array },
   organization: { type: String },
+  youTubeURL: { type: String },
+  youTubeURLDescription: { type: String },
   organizationLink: { type: String },
   approved: { type: Boolean, required: true },
   profileImage: { type: String },

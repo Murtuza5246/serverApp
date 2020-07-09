@@ -30,6 +30,7 @@ const userSchema = mongoose.Schema({
   savedStatements: { type: Array },
   profileImageId: { type: String },
   about: String,
+  logInDetails: { Type: Array },
 });
 
 const Order = mongoose.model("User", userSchema);
