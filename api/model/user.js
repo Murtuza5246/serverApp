@@ -31,6 +31,7 @@ const userSchema = mongoose.Schema({
   profileImageId: { type: String },
   about: String,
   logInDetails: { Type: Array },
+  verified: { Type: Boolean, Default: false },
 });
 
 const Order = mongoose.model("User", userSchema);

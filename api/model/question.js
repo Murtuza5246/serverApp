@@ -11,6 +11,7 @@ const questionsSchema = mongoose.Schema({
   date: { type: String },
   authType: { type: String, required: true },
   userId: { type: String },
+  verified: { type: String },
 });
 
 const Question = mongoose.model("Question", questionsSchema);

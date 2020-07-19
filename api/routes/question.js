@@ -26,6 +26,7 @@ router.post("/new/ask", (req, res, next) => {
           date: date,
           time: time,
           authType: result[0].authType,
+          verified: result[0].verified,
         });
         question
           .save()
