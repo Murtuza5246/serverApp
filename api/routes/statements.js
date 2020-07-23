@@ -47,6 +47,7 @@ router.post(
   checkAuth,
   upload.array("statementImage", 10),
   (req, res, next) => {
+    console.log(req.body);
     let keywordData = JSON.parse(req.body.keyword);
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
@@ -60,6 +61,8 @@ router.post(
       profileImage: req.body.profileImage,
       userId: req.body.userId,
       keywords: keywordData,
+      attention: false,
+      mSecond: new Date().getTime(),
       statementImage: req.files,
       date: req.body.date,
       shareEmail: req.body.shareEmail,
@@ -101,6 +104,7 @@ router.post(
   checkAuth,
   upload.single("statementImage"),
   (req, res, next) => {
+    console.log(req.body);
     let keywordData = JSON.parse(req.body.keyword);
 
     const statement = new Statement({
@@ -110,6 +114,8 @@ router.post(
       statement: req.body.statement,
       place: req.body.place,
       field: req.body.field,
+      attention: false,
+      mSecond: new Date().getTime(),
       email: req.body.email,
       statementImage: "",
       shareEmail: req.body.shareEmail,
@@ -243,6 +249,35 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
     .then((result) => {
       res.status(200).json({
         message: "SuccessFully approved",
+      });
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Something went wrong , Please try again later",
+      });
+    });
+});
+///////////////////////////////////////////////////////////
+
+router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
+  const id = req.params.pendingId;
+  Statement.updateOne(
+    { _id: id },
+    {
+      $set: {
+        approved: true,
+        attention: true,
+        actionAdminEmail: req.body.emailOfApprover,
+        actionAdminName: req.body.nameOfApprover,
+        actionAdminDate: req.body.dateOfApprover,
+        actionAdminTime: req.body.timeOfApprover,
+      },
+    }
+  )
+    .exec()
+    .then((result) => {
+      res.status(200).json({
+        message: "SuccessFully approved & Madded as attention needed",
       });
     })
     .catch((err) => {

@@ -32,6 +32,8 @@ const statementsSchema = mongoose.Schema({
   userId: { type: String, required: true },
   linkTitle: { type: String },
   keywords: Array,
+  attention: { type: Boolean },
+  mSecond: { type: Number },
 });
 
 const statement = mongoose.model("Statements", statementsSchema);
