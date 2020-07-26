@@ -12,6 +12,8 @@ const questionsSchema = mongoose.Schema({
   authType: { type: String, required: true },
   userId: { type: String },
   verified: { type: String },
+  likes: { type: Array },
+  liked: { type: Boolean, default: false },
 });
 
 const Question = mongoose.model("Question", questionsSchema);

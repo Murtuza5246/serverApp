@@ -9,6 +9,7 @@ const fileUpload = require("express-fileupload");
 const Upload = require("../model/upload");
 const app = express();
 const upload = require("./imageUploadEngine");
+const Question = require("../model/question.js");
 ////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
@@ -191,6 +192,8 @@ router.patch("/updateFields/:id", checkAuth, (req, res) => {
       });
     });
 });
+///////////////////////////////////
+
 ///////////////////////////////////
 
 router.get("/pending", (req, res, next) => {

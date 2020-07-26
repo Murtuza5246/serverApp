@@ -294,6 +294,13 @@ router.patch(
         //   message: "not updated",
         // });
       });
+    Question.updateMany(
+      {},
+      { $set: { "likes.$[i].profileImage": req.file.filename } },
+      { arrayFilters: [{ "i.userId": id }] }
+    )
+      .then()
+      .catch();
   }
 );
 
