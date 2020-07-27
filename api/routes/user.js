@@ -43,6 +43,14 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               error: err,
             });
           } else {
+            let composeHandle = false;
+            if (
+              req.body.authType === "Identifier" ||
+              req.body.authType === "Admin"
+            ) {
+              composeHandle = true;
+            }
+
             const user = new User({
               _id: mongoose.Types.ObjectId(),
               profileImage: req.file.filename,
@@ -66,6 +74,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               creationTime: req.body.creationTime,
               savedStatements: [],
               verified: false,
+              composeHandle: composeHandle,
             });
             user
               .save()
@@ -331,6 +340,7 @@ router.post("/login", (req, res, next) => {
               fName: user[0].fName,
               lName: user[0].lName,
               verified: user[0].verified,
+              composeHandle: user[0].composeHandle,
             },
             process.env.JWT_TOKEN,
             {

@@ -10,6 +10,7 @@ const Upload = require("../model/upload");
 const app = express();
 const upload = require("./imageUploadEngine");
 const Question = require("../model/question.js");
+const { json } = require("body-parser");
 ////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
@@ -206,6 +207,22 @@ router.get("/pending", (req, res, next) => {
     });
 });
 
+//////////////////////////////////////////////////////////////////////////
+
+router.get("/my/:id", (req, res) => {
+  const id = req.params.id;
+
+  Statement.find({ userId: id })
+    .then((result) => {
+      return res.status(200).json(result);
+    })
+    .catch((err) => {
+      return res.status(200).json({
+        message: "Something went wrong",
+        error: MediaStreamError,
+      });
+    });
+});
 //////////////////////////////////////////////////////////////////////////
 
 router.get("/userStatements/approved", (req, res, next) => {

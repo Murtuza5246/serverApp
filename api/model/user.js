@@ -32,6 +32,7 @@ const userSchema = mongoose.Schema({
   about: String,
   logInDetails: { Type: Array },
   verified: { Type: Boolean, Default: false },
+  composeHandle: { type: Boolean, Default: false },
 });
 
 const Order = mongoose.model("User", userSchema);
