@@ -6,6 +6,7 @@ const User = require("../model/user");
 const checkAuth = require("../middleWare/check-auth");
 const { array } = require("./imageUploadEngine");
 const app = express();
+let ObjectId = require("mongodb").ObjectID;
 
 ////////////////////////////////////
 router.post("/new/ask", (req, res, next) => {
@@ -110,7 +111,7 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
       );
       const newObjectInAnswer = { userId: req.params.userId };
 
-      if (true) {
+      if (newRaiserArray.length !== 1) {
         console.log("in if statement");
         let updateTheCommentField = [
           ...commentRaiserHandler[0].vote,
@@ -119,8 +120,8 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
 
         console.log(updateTheCommentField);
 
-        Question.updateOne(
-          { _id: questionId, comments: { $elemMatch: { _id: commentId } } },
+        Question.update(
+          { _id: ObjectId(questionId), "comments._id": ObjectId(commentId) },
           { $push: { "comments.$.vote": { userId } } }
         )
 
