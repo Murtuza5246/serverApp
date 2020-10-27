@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const Question = require("../model/question");
 const User = require("../model/user");
 const checkAuth = require("../middleWare/check-auth");
+const { array } = require("./imageUploadEngine");
 const app = express();
 
 ////////////////////////////////////
@@ -92,6 +93,64 @@ router.get("/getcomments/:id", (req, res, next) => {
 });
 ////////////////////////////////////////////////
 
+router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
+  const userId = req.params.userId;
+  const questionId = req.params.questionId;
+  const commentId = req.params.commentId;
+  Question.find({
+    _id: req.params.questionId,
+  })
+    .then((result) => {
+      let commentRaiserHandler = result[0].comments.filter((items) => {
+        return String(items._id) === String(req.params.commentId);
+      });
+
+      let newRaiserArray = commentRaiserHandler[0].vote.filter(
+        (item) => item.userId === req.params.userId
+      );
+      const newObjectInAnswer = { userId: req.params.userId };
+
+      if (true) {
+        console.log("in if statement");
+        let updateTheCommentField = [
+          ...commentRaiserHandler[0].vote,
+          newObjectInAnswer,
+        ];
+
+        console.log(updateTheCommentField);
+
+        Question.updateOne(
+          { _id: questionId, comments: { $elemMatch: { _id: commentId } } },
+          { $push: { "comments.$.vote": { userId } } }
+        )
+
+          .then((result) => {
+            console.log("after update");
+            res.status(200).json({
+              network: "success",
+            });
+            // .catch((error) => {
+            //   console.log("in if catch");
+            //   res.status(400).json({
+            //     error: error,
+            //   });
+            // });
+          })
+          .catch((error) => {
+            res.status(400).json({
+              error: error,
+            });
+          });
+      }
+    })
+    .catch((error) => {
+      console.log("in catch");
+    });
+  // Question.update({_id : req.params.questionId , "comments._id":commentId} , {$inc: {"comments.$.likes": 10}})
+});
+
+////////////////////////////////////////////////
+
 router.patch("/likes/:questionId/:userId", checkAuth, (req, res) => {
   const questionId = req.params.questionId;
   const userId = req.params.userId;
@@ -140,7 +199,11 @@ router.patch("/likes/:questionId/:userId", checkAuth, (req, res) => {
 
 router.patch("/new/answer/:id", (req, res, next) => {
   const id = req.params.id;
-  const newAnswer = req.body;
+  const newAnswer = {
+    _id: new mongoose.Types.ObjectId(),
+    ...req.body,
+    vote: [],
+  };
   Question.findById(id)
     .exec()
     .then((result) => {
