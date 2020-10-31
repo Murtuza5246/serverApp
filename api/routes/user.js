@@ -74,8 +74,10 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               creationDate: req.body.creationDate,
               creationTime: req.body.creationTime,
               savedStatements: [],
-              verified: false,
               composeHandle: composeHandle,
+              OName: req.body.OName,
+              OAddress: req.body.OAddress,
+              field: req.body.field,
             });
             user
               .save()
