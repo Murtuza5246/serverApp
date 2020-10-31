@@ -7,6 +7,7 @@ const multer = require("multer");
 const upload = require("./imageUploadEngine");
 const GridFsStorage = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
+let ObjectId = require("mongodb").ObjectID;
 const User = require("../model/user");
 const Statement = require("../model/statements");
 const Question = require("../model/question");
@@ -367,91 +368,6 @@ router.post("/login", (req, res, next) => {
         message: "Auth Failed",
         error: err,
       });
-    });
-});
-/////////////////////////////////////////////////////
-
-router.patch("/verification/:id/:type", (req, res) => {
-  const id = req.params.userId;
-  const type = req.params.type;
-  console.log(type);
-  const bool = req.body.bool;
-  console.log(bool);
-
-  User.updateOne({ _id: id }, { $set: { verified: false } })
-    .exec()
-    .then((result) => {
-      // res.status(200).json({
-      //   message: "May be successfully updated",
-      //   result,
-      // });
-    })
-    .catch();
-
-  // User.updateOne(
-  //   { _id: id },
-  //   {
-  //     $set: { verified: type },
-  //   },
-  //   { upsert: true }
-  // )
-  //   .exec()
-  //   .then((result) => {
-  //     res.status(200).json({
-  //       message: "Photo updated",
-  //     });
-  //   })
-
-  // .catch((err) => {
-  //   res.status(500).json({
-  //     message: "Not Uploaded",
-  //     error: err,
-  //   });
-  // });
-  Statement.updateMany(
-    {},
-    { $set: { "comments.$[i].verified": bool } },
-    { arrayFilters: [{ "i.userId": id }] }
-  )
-    .then((result) => {
-      // res.status(200).json({
-      //   message: "statements comment section",
-      //   result,
-      // });
-    })
-    .catch((err) => {});
-  Question.updateMany({ userId: id }, { $set: { verified: bool.toString() } })
-    .then((result) => {
-      res.status(200).json({
-        message: "question comment section",
-        result,
-      });
-    })
-    .catch((err) => {
-      // res.status(400).json({
-      //   error: err,
-      //   message: "not updated",
-      // });
-    });
-  Statement.updateMany({ userId: id }, { $set: { verified: bool } })
-    .then((result) => {})
-    .catch((err) => {});
-  Question.updateMany(
-    {},
-    { $set: { "comments.$[i].verified": bool.toString() } },
-    { arrayFilters: [{ "i.userId": id }] }
-  )
-    .then((result) => {
-      // res.status(200).json({
-      //   message: "question comment section",
-      //   result,
-      // });
-    })
-    .catch((err) => {
-      // res.status(400).json({
-      //   error: err,
-      //   message: "not updated",
-      // });
     });
 });
 
