@@ -6,11 +6,20 @@ const User = require("../model/user");
 const checkAuth = require("../middleWare/check-auth");
 const { array } = require("./imageUploadEngine");
 const app = express();
+const nodemailer = require("nodemailer");
 let ObjectId = require("mongodb").ObjectID;
 
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "problemspotter35@gmail.com",
+    pass: "Problemspotter@5246",
+  },
+});
 ////////////////////////////////////
 router.post("/new/ask", (req, res, next) => {
   const { name, email, questionAsked, time, date, userId } = req.body;
+  const _id = new mongoose.Types.ObjectId();
 
   User.find({ email: email })
     .then((result) => {
@@ -20,7 +29,7 @@ router.post("/new/ask", (req, res, next) => {
         });
       } else {
         const question = new Question({
-          _id: new mongoose.Types.ObjectId(),
+          _id: _id,
           uploadedByName: name,
           uploadedByEmail: email,
           question: questionAsked,
@@ -37,6 +46,23 @@ router.post("/new/ask", (req, res, next) => {
             res.status(200).json({
               message: "Uploaded Successfully",
             });
+            transporter.sendMail(
+              {
+                from: "problemspotter35@gmail.com",
+                to: email,
+                subject: "Question on problemspotter.com",
+                // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
+                //       The supporters like you is holding the civil field in technology era`,
+                html: `<h1>Hi ${name}</h1><h3>The question <strong><i>"${questionAsked}"</strong><i style="text-decoration: underline;"></h3><h4>is submitted</h4><br/><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+              },
+              function (error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
+              }
+            );
           })
           .catch((err) => {
             console.log(err);
@@ -130,12 +156,6 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
             res.status(200).json({
               network: "success",
             });
-            // .catch((error) => {
-            //   console.log("in if catch");
-            //   res.status(400).json({
-            //     error: error,
-            //   });
-            // });
           })
           .catch((error) => {
             res.status(400).json({
@@ -200,22 +220,57 @@ router.patch("/likes/:questionId/:userId", checkAuth, (req, res) => {
 
 router.patch("/new/answer/:id", (req, res, next) => {
   const id = req.params.id;
+  const {
+    answer,
+    time,
+    name,
+    date,
+    profileImage,
+    authType,
+    userId,
+    verified,
+  } = req.body;
   const newAnswer = {
     _id: new mongoose.Types.ObjectId(),
-    ...req.body,
+    answer,
+    time,
+    name,
+    date,
+    profileImage,
+    authType,
+    userId,
+    verified,
     vote: [],
   };
+
   Question.findById(id)
     .exec()
     .then((result) => {
+      console.log(req.body.questionDetails);
+
       const preAnswers = result.comments;
       preAnswers.unshift(newAnswer);
       Question.update({ _id: id }, { $set: { comments: preAnswers } })
         .exec()
-        .then((result) => {
+        .then((result1) => {
           res.status(200).json({
             message: "Successfully updated",
           });
+          transporter.sendMail(
+            {
+              from: "problemspotter35@gmail.com",
+              to: req.body.questionDetails.uploadedByEmail,
+              subject: "Question-Answer on problemspotter.com",
+              html: `<h1>Hi ${req.body.questionDetails.uploadedByName}</h1><h3>The question <strong>"${req.body.questionDetails.question}"</strong></h3><h4>is got a response</h4><br/><h4>Check that out <a href='problemspotter.com/qanda?questionId=${req.body.questionDetails._id}' >here</a></h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${req.body.questionDetails._id}'>here</a></h3><br/><p>Hope you get your thoughts clear.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+            },
+            function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            }
+          );
         })
         .catch((err) => {
           res.status(500).json({

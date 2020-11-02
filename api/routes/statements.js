@@ -11,6 +11,15 @@ const app = express();
 const upload = require("./imageUploadEngine");
 const Question = require("../model/question.js");
 const { json } = require("body-parser");
+const nodemailer = require("nodemailer");
+
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "problemspotter35@gmail.com",
+    pass: "Problemspotter@5246",
+  },
+});
 ////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
@@ -91,6 +100,21 @@ router.post(
             },
           },
         });
+        transporter.sendMail(
+          {
+            from: "problemspotter35@gmail.com",
+            to: req.body.email,
+            subject: "Sending Email using Node.js",
+            html: `<h1>Hi ${req.body.identifier},</h1><br/><p>your statement is successfully submitted on problemspotter.com for review, once it is done we will let you know about this</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg'  /><h4>The contributor like you is holding the civil engineering society in this technology era<h4/>`,
+          },
+          function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          }
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -148,6 +172,23 @@ router.post(
             },
           },
         });
+        transporter.sendMail(
+          {
+            from: "problemspotter35@gmail.com",
+            to: req.body.email,
+            subject: "Sending Email using Node.js",
+            // text: `Hi ${req.body.identifier}, thank you for your contribution on problemspotter.com.
+            //       You will get to know once your statement get an action by admin`,
+            html: `<h1>Hi ${req.body.identifier},</h1><br/><p>your statement is successfully submitted on problemspotter.com for review, once it is done we will let you know about this</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg'  /><h4>The contributor like you is holding the civil engineering society in this technology era<h4/>`,
+          },
+          function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          }
+        );
       })
       .catch((err) => {
         console.log(err);
@@ -270,6 +311,24 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
       res.status(200).json({
         message: "SuccessFully approved",
       });
+      console.log(result);
+      transporter.sendMail(
+        {
+          from: "problemspotter35@gmail.com",
+          to: req.body.email,
+          subject: "Sending Email using Node.js",
+          // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
+          //       The supporters like you is holding the civil field in technology era`,
+          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+        },
+        function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        }
+      );
     })
     .catch((err) => {
       res.status(500).json({
@@ -299,6 +358,23 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
       res.status(200).json({
         message: "SuccessFully approved & Madded as attention needed",
       });
+      transporter.sendMail(
+        {
+          from: "problemspotter35@gmail.com",
+          to: req.body.email,
+          subject: "Sending Email using Node.js",
+          // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
+          //       The supporters like you is holding the civil field in technology era`,
+          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+        },
+        function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Email sent: " + info.response);
+          }
+        }
+      );
     })
     .catch((err) => {
       res.status(500).json({
