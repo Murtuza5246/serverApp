@@ -6,8 +6,8 @@ const User = require("../model/user");
 const checkAuth = require("../middleWare/check-auth");
 const { array } = require("./imageUploadEngine");
 const app = express();
-const nodemailer = require("nodemailer");
 let ObjectId = require("mongodb").ObjectID;
+const nodemailer = require("nodemailer");
 
 let transporter = nodemailer.createTransport({
   service: "gmail",
@@ -253,6 +253,7 @@ router.patch("/new/answer/:id", (req, res, next) => {
       Question.update({ _id: id }, { $set: { comments: preAnswers } })
         .exec()
         .then((result1) => {
+          console.log("problem is in this");
           res.status(200).json({
             message: "Successfully updated",
           });

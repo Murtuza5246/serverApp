@@ -19,6 +19,16 @@ const mongoURI = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mon
 const conn = mongoose.createConnection(mongoURI);
 const checkAuth = require("../middleWare/check-auth");
 
+const nodemailer = require("nodemailer");
+
+let transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "problemspotter35@gmail.com",
+    pass: "Problemspotter@5246",
+  },
+});
+
 // Init gfs
 let gfs;
 
@@ -45,15 +55,42 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
             });
           } else {
             let composeHandle = false;
+            let emailKey =
+              new mongoose.Types.ObjectId() +
+              "_" +
+              new mongoose.Types.ObjectId() +
+              "_" +
+              Math.random(0, 10000);
+
+            let userId = new mongoose.Types.ObjectId();
             if (
               req.body.authType === "Identifier" ||
               req.body.authType === "Admin"
             ) {
               composeHandle = true;
             }
+            transporter.sendMail(
+              {
+                from: "problemspotter35@gmail.com",
+                to: req.body.email,
+                subject: "Verify your email",
+                // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+                //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+                html: `<h1>Hi ${
+                  req.body.fName + "  " + req.body.lName
+                }</h1><br/><p>Dear user of problemspotter.com , to use account features on problemspotter.com you first need to verify your email. <strong>The email verification link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for verification <strong><a href='problemspotter.com/account/authentication/${userId}/${emailKey}'  >problemspotter.com/account/authentication/${userId}/${emailKey}</a></strong></p><p>Love from problemspotter.com ❤</p>`,
+              },
+              function (error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
+              }
+            );
 
             const user = new User({
-              _id: mongoose.Types.ObjectId(),
+              _id: userId,
               profileImage: req.file.filename,
               profileImageId: req.file.id,
               authType: req.body.authType,
@@ -78,10 +115,12 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               OName: req.body.OName,
               OAddress: req.body.OAddress,
               field: req.body.field,
+              emailVerified: false,
+              emailKey,
             });
             user
               .save()
-              .then((result) => {
+              .then((result21) => {
                 res.status(201).json({
                   message: "User Created successfully",
                 });
@@ -94,6 +133,12 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
           }
         });
       }
+    })
+    .catch((err) => {
+      res.status(400).json({
+        message: "error happened ",
+        error: err,
+      });
     });
 });
 
@@ -112,6 +157,71 @@ router.patch("/update/about/:id/:about", checkAuth, (req, res) => {
     .catch((err) => {
       res.status(500).json({
         message: "Something went wrong",
+        error: err,
+      });
+    });
+});
+
+////////////////////////////////////////////////////////
+
+router.patch("/account/authentication/:id/:emailKey", (req, res) => {
+  const id = req.params.id;
+  const emailKey = req.params.emailKey + "_" + "submitted";
+
+  User.update(
+    { _id: id, emailKey: req.params.emailKey },
+    { emailVerified: true, emailKey }
+  )
+    .then((result) => {
+      res.status(200).json({
+        message: "User verified successfully",
+      });
+      User.findOne({ _id: id })
+        .then((response) => {
+          transporter.sendMail(
+            {
+              from: "problemspotter35@gmail.com",
+              to: response.email,
+              subject: "Verification of email is successfully completed",
+              // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+              //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+              html: `<h1>Hi ${
+                response.fName + "  " + response.lName
+              }</h1><br/><p>Dear user of problemspotter.com, your email verification on problemspotter.com is successfully completed. <strong>You can log into your account now.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Click on this link to log into you account <strong><a href='problemspotter.com/login'  >click here</a></strong></p><p>Love from problemspotter.com ❤</p>`,
+            },
+            function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            }
+          );
+        })
+        .catch((err) => {});
+    })
+    .catch((err) => {
+      res.status(400).json({
+        error: err,
+      });
+    });
+});
+
+////////////////////////////////////////////////////////
+
+router.patch("/verify/authenticator/:id/:emailKey", (req, res) => {
+  User.update(
+    { _id: ObjectId(req.params.id) },
+    { $set: { emailKey: "Verified", emailVerified: true } }
+  )
+    .then((result) => {
+      res.status(200).json({
+        message: "SuccessFully verified",
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        message: "Link is not good",
         error: err,
       });
     });
@@ -324,6 +434,11 @@ router.post("/login", (req, res, next) => {
       if (user.length < 1) {
         return res.status(200).json({
           message: "Auth failed",
+        });
+      }
+      if (!user[0].emailVerified) {
+        return res.status(200).json({
+          message: "Check your email for email verification",
         });
       }
 

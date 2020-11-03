@@ -36,6 +36,8 @@ const userSchema = mongoose.Schema({
   logInDetails: { Type: Array },
   verified: { Type: Boolean, Default: false },
   composeHandle: { type: Boolean, Default: false },
+  emailVerified: { type: Boolean, Default: false },
+  emailKey: { type: String },
 });
 
 const Order = mongoose.model("User", userSchema);
