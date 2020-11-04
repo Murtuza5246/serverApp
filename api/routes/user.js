@@ -161,6 +161,112 @@ router.patch("/update/about/:id/:about", checkAuth, (req, res) => {
       });
     });
 });
+/////////////////////////////////////////////////////////
+
+router.patch("/forget", (req, res) => {
+  User.find({ email: req.body.email })
+    .then((result) => {
+      if (result.length === 0) {
+        return res.status(200).json({
+          message: "The email you entered is wrong",
+        });
+      } else {
+        let forgetKey =
+          new mongoose.Types.ObjectId() +
+          "_" +
+          new mongoose.Types.ObjectId() +
+          "_" +
+          Math.random(0, 10000);
+        User.updateOne(
+          { email: req.body.email },
+          { $set: { forgetKey: forgetKey } }
+        )
+          .then((result) => {
+            console.log("User updated");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        transporter.sendMail(
+          {
+            from: "problemspotter35@gmail.com",
+            to: req.body.email,
+            subject: "Reset password link",
+            // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+            //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+            html: `<h1>Hi ${
+              result[0].fName + "  " + result[0].lName
+            }</h1><br/><p>Dear user of problemspotter.com , You have made an forget password request from your account.<strong>The password reset link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for password reset <strong><a href='problemspotter.com/account/authentication/forget/${forgetKey}'  >problemspotter.com/account/authentication/forget/${forgetKey}</a></strong></p><p>if it was not you just ignore this email.</p><p>Love from problemspotter.com ❤</p>`,
+          },
+          function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              res.status(200).json({
+                message: "Reset link has been sent",
+              });
+              console.log("Email sent: " + info.response);
+            }
+          }
+        );
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+////////////////////////////////////////////////////////
+
+router.patch("/forget/newPassword/:forgetKey", (req, res) => {
+  const forgetKey = req.params.forgetKey;
+  User.find({ forgetKey: forgetKey })
+    .then((result) => {
+      if (result.length === 0) {
+        return res.status(200).json({
+          message: "We could not find you",
+        });
+      } else {
+        bcrypt.hash(req.body.password, 10, (err, hash) => {
+          if (err) {
+            res.status(500).json({
+              error: err,
+            });
+          } else {
+            User.updateOne(
+              { forgetKey: forgetKey },
+              { $set: { password: hash, forgetKey: "forget key is used" } }
+            )
+              .then((result1) => {
+                res.status(200).json({
+                  message: "Password has been reset successfully",
+                });
+                transporter.sendMail(
+                  {
+                    from: "problemspotter35@gmail.com",
+                    to: result[0].email,
+                    subject: "Reset password link",
+                    // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+                    //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+                    html: `<h1>Hi ${
+                      result[0].fName + "  " + result[0].lName
+                    }</h1><br/><p>Dear user of problemspotter.com , your password has been successfully reset.</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>You can now log into your account. Thank you</p><p>if it was not you change you password or reply us on this mail.</p><p>Love from problemspotter.com ❤</p>`,
+                  },
+                  function (error, info) {
+                    if (error) {
+                      console.log(error);
+                    } else {
+                      console.log("Email sent: " + info.response);
+                    }
+                  }
+                );
+              })
+              .catch();
+          }
+        });
+      }
+    })
+    .catch();
+});
 
 ////////////////////////////////////////////////////////
 
@@ -169,7 +275,7 @@ router.patch("/account/authentication/:id/:emailKey", (req, res) => {
   const emailKey = req.params.emailKey + "_" + "submitted";
 
   User.update(
-    { _id: id, emailKey: req.params.emailKey },
+    { emailKey: req.params.emailKey },
     { emailVerified: true, emailKey }
   )
     .then((result) => {
