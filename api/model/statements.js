@@ -4,7 +4,7 @@ const statementsSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   identifier: { type: String, require: true }, //name
   title: { type: String, required: true },
-  statement: { type: String, require: true },
+  statement: { type: Object, require: true },
   email: { type: String, required: true },
   place: { type: String, required: true },
   identifierData: {

@@ -130,8 +130,8 @@ router.post(
   checkAuth,
   upload.single("statementImage"),
   (req, res, next) => {
-    console.log(req.body);
     let keywordData = JSON.parse(req.body.keyword);
+    // let textObject = JSON.parse(req.body.statement);
 
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
