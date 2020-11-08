@@ -111,12 +111,15 @@ router.get("/image/:filename", (req, res) => {
 
     // If the file exists then check whether it is an image
     if (
-      file.contentType === "image/jpeg" ||
-      file.contentType === "image/png" ||
-      file.contentType === "application/pdf" ||
-      file.contentType === "application/msword" ||
-      file.contentType === "audio/mpeg" ||
-      file.contentType === "audio/*"
+      true
+      // file.contentType === "image/jpeg" ||
+      // file.contentType === "image/png" ||
+      // file.contentType === "application/pdf" ||
+      // file.contentType === "application/msword" ||
+      // file.contentType === "audio/mpeg" ||
+      // file.contentType === "audio/*" ||
+      // file.contentType ===
+      //   "application/vnd.openxmlformats-officedocument.wordprocessing"
     ) {
       // Read output to browser
       const readstream = gfs.createReadStream(file.filename);
