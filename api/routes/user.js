@@ -244,7 +244,7 @@ router.patch("/forget/newPassword/:forgetKey", (req, res) => {
                   {
                     from: "problemspotter35@gmail.com",
                     to: result[0].email,
-                    subject: "Reset password link",
+                    subject: "Password change",
                     // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
                     //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
                     html: `<h1>Hi ${
