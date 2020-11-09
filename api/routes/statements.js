@@ -58,8 +58,8 @@ router.post(
   checkAuth,
   upload.array("statementImage", 10),
   (req, res, next) => {
-    console.log(req.body);
     let keywordData = JSON.parse(req.body.keyword);
+    let fieldsArray = JSON.parse(req.body.field);
     const statement = new Statement({
       _id: new mongoose.Types.ObjectId(),
       identifier: req.body.identifier,
@@ -67,7 +67,7 @@ router.post(
       statement: req.body.statement,
       place: req.body.place,
       youTubeURL: req.body.youTubeURL,
-      field: req.body.field,
+      field: fieldsArray,
       email: req.body.email,
       profileImage: req.body.profileImage,
       userId: req.body.userId,
@@ -131,6 +131,7 @@ router.post(
   upload.single("statementImage"),
   (req, res, next) => {
     let keywordData = JSON.parse(req.body.keyword);
+    let fieldsArray = JSON.parse(req.body.field);
     // let textObject = JSON.parse(req.body.statement);
 
     const statement = new Statement({
@@ -139,7 +140,7 @@ router.post(
       title: req.body.title,
       statement: req.body.statement,
       place: req.body.place,
-      field: req.body.field,
+      field: fieldsArray,
       attention: false,
       mSecond: new Date().getTime(),
       email: req.body.email,
@@ -311,7 +312,6 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
       res.status(200).json({
         message: "SuccessFully approved",
       });
-      console.log(result);
       transporter.sendMail(
         {
           from: "problemspotter35@gmail.com",
@@ -325,7 +325,6 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
           if (error) {
             console.log(error);
           } else {
-            console.log("Email sent: " + info.response);
           }
         }
       );

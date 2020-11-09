@@ -11,7 +11,7 @@ const statementsSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  field: { type: String, required: true }, // this can be use full to get only related statements likewise this.find({field:this.fiels})
+  field: { type: Array, required: true }, // this can be use full to get only related statements likewise this.find({field:this.fiels})
   // imageId: { type: String },
   date: { type: String },
   time: { type: String },
