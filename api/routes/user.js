@@ -146,7 +146,6 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
 
 router.patch("/update/about/:id/:about", checkAuth, (req, res) => {
   const id = req.params.id;
-  console.log(req.body);
 
   User.updateOne({ _id: id }, { $set: { about: req.params.about } })
     .then((result) => {
@@ -405,6 +404,53 @@ router.patch("/statement/save/:userId", (req, res, next) => {
 });
 ////////////////////////////////////
 
+router.patch("/update/rating/:id", (req, res) => {
+  User.findOne({ _id: req.params.id })
+    .then((result) => {
+      console.log(result);
+      const userRatingArray = result.rating;
+      const checkUserId = userRatingArray.filter(
+        (item) => item.userId === req.body.userId
+      );
+      if (checkUserId.length === 0) {
+        User.updateOne(
+          { _id: req.params.id },
+          {
+            $push: {
+              rating: { userId: req.body.userId, value: req.body.value },
+            },
+          }
+        )
+          .then((result2) => {
+            res.status(200).json({
+              message: "successfully added",
+            });
+          })
+          .catch((err) => {
+            console.log("failed to add new userId");
+          });
+      } else {
+        User.updateOne(
+          { _id: req.params.id, "rating.userId": req.body.userId },
+          { $set: { "rating.$.value": req.body.value } }
+        )
+          .then((result2) => {
+            res.status(200).json({
+              value: result2,
+            });
+          })
+          .catch((err) => {
+            console.log("existing user value failed");
+          });
+      }
+    })
+    .catch((err) => {
+      console.log("failed in main catch");
+    });
+});
+
+////////////////////////////////////
+
 router.get("/details/:userId", (req, res, next) => {
   const id = req.params.userId;
   User.findById(id)
@@ -424,7 +470,6 @@ router.get("/details/:userId", (req, res, next) => {
 //////////////////////////////////////////////
 
 router.post("/upload/sound", upload.single("sound"), (req, res) => {
-  console.log(req.file.filename);
   if (req.file.filename) {
     res.status(200).json({
       message: "uploaded",
@@ -448,8 +493,6 @@ router.patch(
     User.findOne({ _id: id })
       .exec()
       .then((result1) => {
-        console.log(result1);
-
         gfs.remove({ _id: result1.profileImageId, root: "uploads" });
       })
       .catch();
@@ -611,7 +654,6 @@ router.get("/adminProfileGetter", (req, res, next) => {
 
 router.get("/identifier/details/:id", (req, res) => {
   const id = req.params.id;
-  console.log(id);
 
   User.findById(id)
     .then((result) => {

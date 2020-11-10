@@ -39,6 +39,7 @@ const userSchema = mongoose.Schema({
   emailVerified: { type: Boolean, Default: false },
   emailKey: { type: String },
   forgetKey: { type: String },
+  rating: { type: Array },
 });
 
 const Order = mongoose.model("User", userSchema);
