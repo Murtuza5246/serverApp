@@ -314,6 +314,32 @@ router.patch("/account/authentication/:id/:emailKey", (req, res) => {
 
 ////////////////////////////////////////////////////////
 
+router.get("/all", (req, res) => {
+  User.find({}, { lName: true, fName: true, _id: true })
+    .then((result) => {
+      const newArray = [];
+      for (let i = 0; i < result.length; i++) {
+        newArray.push({
+          text:
+            result[i].fName.toUpperCase() + " " + result[i].lName.toUpperCase(),
+          value: result[i].fName + " " + result[i].lName,
+          url: `problemspotter.com/user/details/${result[i]._id}`,
+          avatar: result[i].profileImage,
+        });
+      }
+      res.status(200).json({
+        members: newArray,
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        error: err,
+      });
+    });
+});
+
+////////////////////////////////////////////////////////
+
 router.patch("/verify/authenticator/:id/:emailKey", (req, res) => {
   User.update(
     { _id: ObjectId(req.params.id) },
