@@ -315,16 +315,20 @@ router.patch("/account/authentication/:id/:emailKey", (req, res) => {
 ////////////////////////////////////////////////////////
 
 router.get("/all", (req, res) => {
-  User.find({}, { lName: true, fName: true, _id: true })
+  User.find({}, { lName: true, fName: true, _id: true, profileImage: true })
     .then((result) => {
       const newArray = [];
       for (let i = 0; i < result.length; i++) {
         newArray.push({
           text:
             result[i].fName.toUpperCase() + " " + result[i].lName.toUpperCase(),
+          name: result[i].fName + " " + result[i].lName + i,
           value: result[i].fName + " " + result[i].lName,
-          url: `problemspotter.com/user/details/${result[i]._id}`,
-          avatar: result[i].profileImage,
+          url: `https://problemspotter.com/user/details/${result[i]._id}`,
+          avatar: `https://my-server-problemspotter.herokuapp.com/image/image/${result[i].profileImage}`,
+
+          userId: result[i]._id,
+          link: `https://problemspotter.com/user/details/${result[i]._id}`,
         });
       }
       res.status(200).json({
