@@ -634,6 +634,30 @@ router.post("/login", (req, res, next) => {
         }
 
         if (result) {
+          const weeks = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ];
+          User.updateOne(
+            { _id: user[0]._id },
+            {
+              $push: {
+                logInDetails: {
+                  day: weeks[new Date().getDay() - 1],
+                  time: new Date(),
+                  device: req.body.deviceType,
+                  otherDetails: JSON.parse(req.body.otherDetails),
+                },
+              },
+            }
+          )
+            .then()
+            .catch();
           const token = jwt.sign(
             {
               email: user[0].email,
