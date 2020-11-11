@@ -14,6 +14,7 @@ const questionsSchema = mongoose.Schema({
   verified: { type: String },
   likes: { type: Array },
   liked: { type: Boolean, default: false },
+  mentions: { type: Array },
 });
 
 const Question = mongoose.model("Question", questionsSchema);

@@ -18,7 +18,8 @@ let transporter = nodemailer.createTransport({
 });
 ////////////////////////////////////
 router.post("/new/ask", (req, res, next) => {
-  const { name, email, questionAsked, time, date, userId } = req.body;
+  const { name, email, questionAsked, time, date, mentions } = req.body;
+
   const _id = new mongoose.Types.ObjectId();
 
   User.find({ email: email })
@@ -51,8 +52,7 @@ router.post("/new/ask", (req, res, next) => {
                 from: "problemspotter35@gmail.com",
                 to: email,
                 subject: "Question on problemspotter.com",
-                // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
-                //       The supporters like you is holding the civil field in technology era`,
+
                 html: `<h1>Hi ${name}</h1><h3>The question <strong><i>"${questionAsked}"</strong><i style="text-decoration: underline;"></h3><h4>is submitted</h4><br/><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
               },
               function (error, info) {
@@ -70,8 +70,6 @@ router.post("/new/ask", (req, res, next) => {
             res.status(400).json({
               message: "Went wrong",
             });
-
-            error: err;
           });
       }
     })

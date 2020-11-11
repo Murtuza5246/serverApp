@@ -315,10 +315,14 @@ router.patch("/account/authentication/:id/:emailKey", (req, res) => {
 ////////////////////////////////////////////////////////
 
 router.get("/all", (req, res) => {
-  User.find({}, { lName: true, fName: true, _id: true, profileImage: true })
+  User.find(
+    {},
+    { lName: true, fName: true, _id: true, profileImage: true, email: true }
+  )
     .then((result) => {
       const newArray = [];
       for (let i = 0; i < result.length; i++) {
+        console.log(result[i].email);
         newArray.push({
           text:
             result[i].fName.toUpperCase() + " " + result[i].lName.toUpperCase(),
@@ -329,6 +333,7 @@ router.get("/all", (req, res) => {
 
           userId: result[i]._id,
           link: `https://problemspotter.com/user/details/${result[i]._id}`,
+          email: result[i].email,
         });
       }
       res.status(200).json({
