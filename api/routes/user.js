@@ -634,6 +634,14 @@ router.post("/login", (req, res, next) => {
         }
 
         if (result) {
+          let loginDetails = user[0].logInDetails;
+          if (user[0].logInDetails.length >= 21) {
+            loginDetails = user[0].logInDetails.slice(
+              1,
+              user[0].logInDetails.length
+            );
+          }
+
           const weeks = [
             "Monday",
             "Tuesday",
@@ -643,17 +651,16 @@ router.post("/login", (req, res, next) => {
             "Saturday",
             "Sunday",
           ];
+          loginDetails.push({
+            day: weeks[new Date().getDay() - 1],
+            time: new Date(),
+            device: req.body.deviceType,
+            otherDetails: JSON.parse(req.body.otherDetails),
+          });
           User.updateOne(
             { _id: user[0]._id },
             {
-              $push: {
-                logInDetails: {
-                  day: weeks[new Date().getDay() - 1],
-                  time: new Date(),
-                  device: req.body.deviceType,
-                  otherDetails: JSON.parse(req.body.otherDetails),
-                },
-              },
+              logInDetails: loginDetails,
             }
           )
             .then()
