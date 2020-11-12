@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
   OName: { type: String },
   OAddress: { type: String },
   field: { type: String },
-  about: String,
+  about: { type: Object },
   logInDetails: { type: Array },
   verified: { type: Boolean, Default: false },
   composeHandle: { type: Boolean, Default: false },
@@ -40,6 +40,9 @@ const userSchema = mongoose.Schema({
   emailKey: { type: String },
   forgetKey: { type: String },
   rating: { type: Array },
+  followers: { type: Array },
+  instagram: { type: String },
+  facebook: { type: String },
 });
 
 const Order = mongoose.model("User", userSchema);

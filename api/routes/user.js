@@ -20,6 +20,7 @@ const conn = mongoose.createConnection(mongoURI);
 const checkAuth = require("../middleWare/check-auth");
 
 const nodemailer = require("nodemailer");
+const { json } = require("body-parser");
 
 let transporter = nodemailer.createTransport({
   service: "gmail",
@@ -111,6 +112,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               creationDate: req.body.creationDate,
               creationTime: req.body.creationTime,
               savedStatements: [],
+              followers: [],
               composeHandle: composeHandle,
               OName: req.body.OName,
               OAddress: req.body.OAddress,
@@ -159,6 +161,76 @@ router.patch("/update/about/:id/:about", checkAuth, (req, res) => {
         error: err,
       });
     });
+});
+/////////////////////////////////////////////////////////
+router.patch("/about/update/:id", (req, res) => {
+  const id = req.params.id;
+  User.updateOne({ _id: id }, { about: req.body.data })
+    .then((result) => {
+      res.status(200).json({
+        message: "successfully updated",
+      });
+    })
+    .catch((err) => {
+      res.status(400).json({
+        message: "not updated",
+        error: err,
+      });
+      console.log(err);
+    });
+});
+
+/////////////////////////////////////////////////////////
+
+router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
+  const userId = req.params.userId;
+  const followersId = req.params.followersId;
+
+  User.find({ _id: userId }).then((result2) => {
+    if (result2.length !== 0) {
+      let followersArray = result2[0].followers;
+      let alreadyFollows = followersArray.filter(
+        (item) => item.userId === followersId
+      );
+      let notFollowing = followersArray.filter(
+        (item) => item.userId !== followersId
+      );
+      if (alreadyFollows.length === 1) {
+        User.updateOne({ _id: userId }, { followers: notFollowing })
+          .then((result) => {
+            res.status(200).json({
+              message: "un-followed",
+            });
+            console.log("un-Followed");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        User.updateOne(
+          { _id: userId },
+          {
+            $push: {
+              followers: req.body,
+            },
+          }
+        )
+          .then((result) => {
+            res.status(200).json({
+              message: "followed",
+            });
+            console.log("followed");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    } else {
+      res.status(200).json({
+        message: "User does not found",
+      });
+    }
+  });
 });
 /////////////////////////////////////////////////////////
 
@@ -322,7 +394,6 @@ router.get("/all", (req, res) => {
     .then((result) => {
       const newArray = [];
       for (let i = 0; i < result.length; i++) {
-        console.log(result[i].email);
         newArray.push({
           text:
             result[i].fName.toUpperCase() + " " + result[i].lName.toUpperCase(),
@@ -438,11 +509,42 @@ router.patch("/statement/save/:userId", (req, res, next) => {
     });
 });
 ////////////////////////////////////
+router.patch("/link/:action/:id", (req, res) => {
+  const action = req.params.action;
+  const id = req.params.id;
+  if (action === "instagram") {
+    User.updateOne({ _id: id }, { instagram: req.body.link })
+      .then((result) => {
+        res.status(200).json({
+          message: "Updated",
+        });
+      })
+      .catch((err) => {
+        res.status(400).json({
+          error: err,
+        });
+      });
+  }
+  if (action === "facebook") {
+    User.updateOne({ _id: id }, { facebook: req.body.link })
+      .then((result) => {
+        res.status(200).json({
+          message: "Updated",
+        });
+      })
+      .catch((err) => {
+        res.status(400).json({
+          error: err,
+        });
+      });
+  }
+});
+
+////////////////////////////////////
 
 router.patch("/update/rating/:id", (req, res) => {
   User.findOne({ _id: req.params.id })
     .then((result) => {
-      console.log(result);
       const userRatingArray = result.rating;
       const checkUserId = userRatingArray.filter(
         (item) => item.userId === req.body.userId
@@ -452,7 +554,7 @@ router.patch("/update/rating/:id", (req, res) => {
           { _id: req.params.id },
           {
             $push: {
-              rating: { userId: req.body.userId, value: req.body.value },
+              rating: req.body,
             },
           }
         )
