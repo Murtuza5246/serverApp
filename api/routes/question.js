@@ -43,7 +43,25 @@ router.post("/new/ask", (req, res, next) => {
         });
         question
           .save()
-          .then((result) => {
+          .then((result1) => {
+            if (mentions.length !== 0) {
+              let mentionString = mentions.toString();
+              transporter.sendMail(
+                {
+                  from: "problemspotter35@gmail.com",
+                  to: mentionString,
+                  subject: "Mentioned in question",
+                  html: `<h3>Hey there,</h3><h6>You got mentioned in a question.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>Check what happened.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+                },
+                function (error, info) {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log("Email sent: " + info.response);
+                  }
+                }
+              );
+            }
             User.updateOne(
               { _id: result[0]._id },
               {
@@ -68,7 +86,7 @@ router.post("/new/ask", (req, res, next) => {
                 to: email,
                 subject: "Question on problemspotter.com",
 
-                html: `<h1>Hi ${name}</h1><h3>The question <strong><i>"${questionAsked}"</strong><i style="text-decoration: underline;"></h3><h4>is submitted</h4><br/><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+                html: `<h1>Hi ${name},</h1><br/><h5>The question is uploaded.</h5><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
               },
               function (error, info) {
                 if (error) {
@@ -289,8 +307,6 @@ router.patch("/new/answer/:id", (req, res, next) => {
   Question.findById(id)
     .exec()
     .then((result) => {
-      console.log(req.body.questionDetails);
-
       const preAnswers = result.comments;
       preAnswers.unshift(newAnswer);
       Question.update({ _id: id }, { $set: { comments: preAnswers } })

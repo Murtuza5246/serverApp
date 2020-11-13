@@ -91,6 +91,24 @@ router.post(
     statement
       .save()
       .then((result) => {
+        if (req.body.mentions.length !== 0) {
+          let mentionString = mentions.toString();
+          transporter.sendMail(
+            {
+              from: "problemspotter35@gmail.com",
+              to: mentionString,
+              subject: "Mentioned in statement",
+              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+            },
+            function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            }
+          );
+        }
         User.updateOne(
           { _id: req.body.userId },
           {
@@ -179,6 +197,24 @@ router.post(
     statement
       .save()
       .then((result) => {
+        if (req.body.mentions.length !== 0) {
+          let mentionString = mentions.toString();
+          transporter.sendMail(
+            {
+              from: "problemspotter35@gmail.com",
+              to: mentionString,
+              subject: "Mentioned in statement",
+              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+            },
+            function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            }
+          );
+        }
         User.updateOne(
           { _id: req.body.userId },
           {
