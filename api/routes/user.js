@@ -113,6 +113,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               creationTime: req.body.creationTime,
               savedStatements: [],
               followers: [],
+              activity: [],
               composeHandle: composeHandle,
               OName: req.body.OName,
               OAddress: req.body.OAddress,
@@ -216,10 +217,49 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
           }
         )
           .then((result) => {
+            User.updateOne(
+              { _id: followersId },
+              {
+                $push: {
+                  activity: {
+                    action: "follower",
+                    link: `https://problemspotter.com/user/details/${req.params.userId}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             res.status(200).json({
               message: "followed",
             });
-            console.log("followed");
+            transporter.sendMail(
+              {
+                from: "problemspotter35@gmail.com",
+                to: req.body.email,
+                subject: "New connection",
+                // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+                //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+                html: `<h1>Hi ${
+                  result2[0].fName + "  " + result2[0].lName + ","
+                }</h1><br/><p>Dear user of problemspotter.com , <a href="https://problemspotter.com/user/details/${
+                  req.body.userId
+                }" > ${
+                  req.body.name
+                }</a> has followed you. </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p> Checkout your profile on <a href="https://problemspotter.com/user/details/${
+                  result2[0]._id
+                }" >here</a>  </p><p>Love from problemspotter.com ❤</p>`,
+              },
+              function (error, info) {
+                if (error) {
+                  console.log(error);
+                } else {
+                  console.log("Email sent: " + info.response);
+                }
+              }
+            );
           })
           .catch((err) => {
             console.log(err);
@@ -559,6 +599,21 @@ router.patch("/update/rating/:id", (req, res) => {
           }
         )
           .then((result2) => {
+            User.updateOne(
+              { _id: req.body.userId },
+              {
+                $push: {
+                  activity: {
+                    action: "rating",
+                    link: `https://problemspotter.com/user/details/${req.params.id}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             res.status(200).json({
               message: "successfully added",
             });
@@ -572,6 +627,21 @@ router.patch("/update/rating/:id", (req, res) => {
           { $set: { "rating.$.value": req.body.value } }
         )
           .then((result2) => {
+            User.updateOne(
+              { _id: req.body.userId },
+              {
+                $push: {
+                  activity: {
+                    action: "rating",
+                    link: `https://problemspotter.com/user/details/${req.params.id}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             res.status(200).json({
               value: result2,
             });

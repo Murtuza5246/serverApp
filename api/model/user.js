@@ -42,6 +42,7 @@ const userSchema = mongoose.Schema({
   rating: { type: Array },
   followers: { type: Array },
   instagram: { type: String },
+  activity: { type: Array },
   facebook: { type: String },
 });
 

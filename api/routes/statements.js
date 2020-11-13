@@ -5,6 +5,7 @@ const multer = require("multer");
 const GridFsStorage = require("multer-gridfs-storage");
 const checkAuth = require("../middleWare/check-auth.js");
 const Statement = require("../model/statements");
+const User = require("../model/user");
 const fileUpload = require("express-fileupload");
 const Upload = require("../model/upload");
 const app = express();
@@ -60,8 +61,9 @@ router.post(
   (req, res, next) => {
     let keywordData = JSON.parse(req.body.keyword);
     let fieldsArray = JSON.parse(req.body.field);
+    const id = new mongoose.Types.ObjectId();
     const statement = new Statement({
-      _id: new mongoose.Types.ObjectId(),
+      _id: id,
       identifier: req.body.identifier,
       title: req.body.title,
       statement: req.body.statement,
@@ -89,6 +91,21 @@ router.post(
     statement
       .save()
       .then((result) => {
+        User.updateOne(
+          { _id: req.body.userId },
+          {
+            $push: {
+              activity: {
+                action: "statement",
+                link: `https://problemspotter.com/user/statement/id/${id}`,
+                date: new Date(),
+                day: new Date().getDay(),
+              },
+            },
+          }
+        )
+          .then()
+          .catch();
         res.status(201).json({
           message: "Created statement successfully",
           createdStatment: {
@@ -133,9 +150,10 @@ router.post(
     let keywordData = JSON.parse(req.body.keyword);
     let fieldsArray = JSON.parse(req.body.field);
     // let textObject = JSON.parse(req.body.statement);
+    const id = new mongoose.Types.ObjectId();
 
     const statement = new Statement({
-      _id: new mongoose.Types.ObjectId(),
+      _id: id,
       identifier: req.body.identifier,
       title: req.body.title,
       statement: req.body.statement,
@@ -161,6 +179,21 @@ router.post(
     statement
       .save()
       .then((result) => {
+        User.updateOne(
+          { _id: req.body.userId },
+          {
+            $push: {
+              activity: {
+                action: "statement",
+                link: `https://problemspotter.com/user/statement/id/${id}`,
+                date: new Date(),
+                day: new Date().getDay(),
+              },
+            },
+          }
+        )
+          .then()
+          .catch();
         res.status(201).json({
           message: "Created statement successfully",
           createdStatment: {
@@ -222,6 +255,21 @@ router.patch("/updateFields/:id", checkAuth, (req, res) => {
     { $set: { title: updatedTitle, statement: updatedContent } }
   )
     .then((result) => {
+      User.updateOne(
+        { _id: req.body.userId },
+        {
+          $push: {
+            activity: {
+              action: "statement",
+              link: `https://problemspotter.com/user/statement/id/${id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
       res.status(200).json({
         message: "Success",
         updatedContent,
@@ -304,11 +352,27 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
         actionAdminName: req.body.nameOfApprover,
         actionAdminDate: req.body.dateOfApprover,
         actionAdminTime: req.body.timeOfApprover,
+        actionAdminUserId: req.body.userId,
       },
     }
   )
     .exec()
     .then((result) => {
+      User.updateOne(
+        { _id: req.body.userId },
+        {
+          $push: {
+            activity: {
+              action: "statement",
+              link: `https://problemspotter.com/user/statement/id/${id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
       res.status(200).json({
         message: "SuccessFully approved",
       });
@@ -349,11 +413,27 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
         actionAdminName: req.body.nameOfApprover,
         actionAdminDate: req.body.dateOfApprover,
         actionAdminTime: req.body.timeOfApprover,
+        actionAdminUserId: req.body.userId,
       },
     }
   )
     .exec()
     .then((result) => {
+      User.updateOne(
+        { _id: req.body.userId },
+        {
+          $push: {
+            activity: {
+              action: "statement",
+              link: `https://problemspotter.com/user/statement/id/${id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
       res.status(200).json({
         message: "SuccessFully approved & Madded as attention needed",
       });
@@ -408,11 +488,27 @@ router.patch("/pending/rejection/:pendingId", (req, res, next) => {
         approved: null,
         actionAdminEmail: req.body.emailOfApprover,
         actionAdminName: req.body.nameOfApprover,
+        actionAdminUserId: req.body.userId,
       },
     }
   )
     .exec()
     .then((result) => {
+      User.updateOne(
+        { _id: req.body.userId },
+        {
+          $push: {
+            activity: {
+              action: "statement",
+              link: `https://problemspotter.com/user/statement/id/${id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
       res.status(200).json({
         message: "SuccessFully rejected",
       });
@@ -456,6 +552,21 @@ router.patch("/new/answer/:id", (req, res) => {
       Statement.update({ _id: id }, { $set: { comments: comments } })
         .exec()
         .then((result) => {
+          User.updateOne(
+            { _id: req.body.userId },
+            {
+              $push: {
+                activity: {
+                  action: "statement",
+                  link: `https://problemspotter.com/user/statement/id/${id}`,
+                  date: new Date(),
+                  day: new Date().getDay(),
+                },
+              },
+            }
+          )
+            .then()
+            .catch();
           res.status(200).json({
             message: "Successfully updated",
           });

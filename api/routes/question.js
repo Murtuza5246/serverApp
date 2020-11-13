@@ -44,6 +44,21 @@ router.post("/new/ask", (req, res, next) => {
         question
           .save()
           .then((result) => {
+            User.updateOne(
+              { _id: result[0]._id },
+              {
+                $push: {
+                  activity: {
+                    action: "question",
+                    link: `problemspotter.com/qanda?questionId=${_id}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             res.status(200).json({
               message: "Uploaded Successfully",
             });
@@ -150,6 +165,21 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
         )
 
           .then((result) => {
+            User.updateOne(
+              { _id: req.params.userId },
+              {
+                $push: {
+                  activity: {
+                    action: "question",
+                    link: `problemspotter.com/qanda?questionId=${questionId}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             console.log("after update");
             res.status(200).json({
               network: "success",
@@ -189,6 +219,21 @@ router.patch("/likes/:questionId/:userId", checkAuth, (req, res) => {
         )
           .exec()
           .then((result) => {
+            User.updateOne(
+              { _id: userId },
+              {
+                $push: {
+                  activity: {
+                    action: "question",
+                    link: `problemspotter.com/qanda?questionId=${questionId}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
             return res.status(200).json({
               message: "Liked",
               data: result,
@@ -251,7 +296,21 @@ router.patch("/new/answer/:id", (req, res, next) => {
       Question.update({ _id: id }, { $set: { comments: preAnswers } })
         .exec()
         .then((result1) => {
-          console.log("problem is in this");
+          User.updateOne(
+            { _id: userId },
+            {
+              $push: {
+                activity: {
+                  action: "question",
+                  link: `problemspotter.com/qanda?questionId=${id}`,
+                  date: new Date(),
+                  day: new Date().getDay(),
+                },
+              },
+            }
+          )
+            .then()
+            .catch();
           res.status(200).json({
             message: "Successfully updated",
           });
