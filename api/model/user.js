@@ -44,6 +44,7 @@ const userSchema = mongoose.Schema({
   instagram: { type: String },
   activity: { type: Array },
   facebook: { type: String },
+  following: { type: Array },
 });
 
 const Order = mongoose.model("User", userSchema);

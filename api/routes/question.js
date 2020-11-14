@@ -169,13 +169,10 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
       const newObjectInAnswer = { userId: req.params.userId };
 
       if (newRaiserArray.length !== 1) {
-        console.log("in if statement");
         let updateTheCommentField = [
           ...commentRaiserHandler[0].vote,
           newObjectInAnswer,
         ];
-
-        console.log(updateTheCommentField);
 
         Question.update(
           { _id: ObjectId(questionId), "comments._id": ObjectId(commentId) },
@@ -198,7 +195,7 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
             )
               .then()
               .catch();
-            console.log("after update");
+
             res.status(200).json({
               network: "success",
             });
@@ -211,7 +208,7 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
       }
     })
     .catch((error) => {
-      console.log("in catch");
+      console.log(error);
     });
   // Question.update({_id : req.params.questionId , "comments._id":commentId} , {$inc: {"comments.$.likes": 10}})
 });

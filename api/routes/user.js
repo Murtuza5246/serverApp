@@ -215,17 +215,33 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
         (item) => item.userId !== followersId
       );
       if (alreadyFollows.length === 1) {
+        User.updateOne(
+          { _id: followersId },
+          { $pull: { following: { userId: userId } } }
+        )
+          .then((data) => console.log())
+          .catch((err) => console.log(err));
         User.updateOne({ _id: userId }, { followers: notFollowing })
+
           .then((result) => {
             res.status(200).json({
               message: "un-followed",
             });
-            console.log("un-Followed");
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
+        User.updateOne(
+          { _id: followersId },
+          {
+            $push: {
+              following: { userId: userId },
+            },
+          }
+        )
+          .then((data) => console.log())
+          .catch((err) => console.log(err));
         User.updateOne(
           { _id: userId },
           {
@@ -257,7 +273,7 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
               {
                 from: "problemspotter35@gmail.com",
                 to: req.body.email,
-                subject: "New connection",
+                subject: "New follower",
                 // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
                 //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
                 html: `<h1>Hi ${
@@ -310,9 +326,7 @@ router.patch("/forget", (req, res) => {
           { email: req.body.email },
           { $set: { forgetKey: forgetKey } }
         )
-          .then((result) => {
-            console.log("User updated");
-          })
+          .then((result) => {})
           .catch((err) => {
             console.log(err);
           });
