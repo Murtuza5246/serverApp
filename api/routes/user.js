@@ -169,7 +169,6 @@ router.patch("/about/update/:id", (req, res) => {
   User.updateOne({ _id: id }, { about: req.body.data })
     .then((result) => {
       let mentionedUsers = JSON.parse(req.body.mentions);
-      console.log(mentionedUsers);
 
       if (mentionedUsers.length !== 0) {
         let mentionString = mentionedUsers.toString();

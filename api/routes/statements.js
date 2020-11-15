@@ -91,8 +91,9 @@ router.post(
     statement
       .save()
       .then((result) => {
-        if (req.body.mentions.length !== 0) {
-          let mentionString = mentions.toString();
+        let mentionedUsers = JSON.parse(req.body.mentions);
+        if (mentionedUsers.length !== 0) {
+          let mentionString = mentionedUsers.toString();
           transporter.sendMail(
             {
               from: "problemspotter35@gmail.com",
@@ -197,8 +198,9 @@ router.post(
     statement
       .save()
       .then((result) => {
-        if (req.body.mentions.length !== 0) {
-          let mentionString = mentions.toString();
+        let mentionedUsers = JSON.parse(req.body.mentions);
+        if (mentionedUsers.length !== 0) {
+          let mentionString = mentionedUsers.toString();
           transporter.sendMail(
             {
               from: "problemspotter35@gmail.com",
@@ -416,7 +418,7 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
         {
           from: "problemspotter35@gmail.com",
           to: req.body.email,
-          subject: "Sending Email using Node.js",
+          subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
           //       The supporters like you is holding the civil field in technology era`,
           html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -477,7 +479,7 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
         {
           from: "problemspotter35@gmail.com",
           to: req.body.email,
-          subject: "Sending Email using Node.js",
+          subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
           //       The supporters like you is holding the civil field in technology era`,
           html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -579,10 +581,39 @@ router.get("/getcomments/:id", (req, res) => {
 
 router.patch("/new/answer/:id", (req, res) => {
   const id = req.params.id;
-  const newQuestion = req.body; //object
+
+  let newQuestion = {
+    answer: req.body.answer,
+    name: req.body.name,
+    profileImage: req.body.profileImage,
+    time: req.body.time,
+    date: req.body.date,
+    userId: req.body.userId,
+    authType: req.body.authType,
+  };
+
   Statement.findById(id)
     .exec()
     .then((result) => {
+      let mentionedUsers = JSON.parse(req.body.mentions);
+      if (mentionedUsers.length !== 0) {
+        let mentionString = mentionedUsers.toString();
+        transporter.sendMail(
+          {
+            from: "problemspotter35@gmail.com",
+            to: mentionString,
+            subject: "Mentioned in statement comment",
+            html: `<h3>Hey there,</h3><h4>You got mentioned in a statement comment section.</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The statement is live  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+          },
+          function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          }
+        );
+      }
       const comments = result.comments;
       comments.unshift(newQuestion);
       Statement.update({ _id: id }, { $set: { comments: comments } })
