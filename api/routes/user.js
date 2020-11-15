@@ -104,7 +104,7 @@ router.post("/signup", upload.single("profileImage"), (req, res, next) => {
               cName: req.body.cName,
               cAddress: req.body.cAddress,
               city: req.body.city,
-              about: req.body.about,
+              about: {},
               nState: req.body.nState,
               pCode: req.body.pCode,
               pString: req.body.pString,
@@ -168,8 +168,11 @@ router.patch("/about/update/:id", (req, res) => {
   const id = req.params.id;
   User.updateOne({ _id: id }, { about: req.body.data })
     .then((result) => {
-      if (req.body.mentions.length !== 0) {
-        let mentionString = mentions.toString();
+      let mentionedUsers = JSON.parse(req.body.mentions);
+      console.log(mentionedUsers);
+
+      if (mentionedUsers.length !== 0) {
+        let mentionString = mentionedUsers.toString();
         transporter.sendMail(
           {
             from: "problemspotter35@gmail.com",
@@ -236,7 +239,13 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
           { _id: followersId },
           {
             $push: {
-              following: { userId: userId },
+              following: {
+                userId: userId,
+                name: result2[0].fName + " " + result2[0].lName,
+                email: result2[0].email,
+                profileImage: result2[0].profileImage,
+                authType: result2[0].authType,
+              },
             },
           }
         )
@@ -763,6 +772,20 @@ router.patch(
     )
       .then((result) => {})
       .catch((err) => {});
+    User.updateMany(
+      {},
+      { $set: { "following.$[i].profileImage": req.file.filename } },
+      { arrayFilters: [{ "i.userId": id }] }
+    )
+      .then((result) => {})
+      .catch((err) => {});
+    User.updateMany(
+      {},
+      { $set: { "followers.$[i].profileImage": req.file.filename } },
+      { arrayFilters: [{ "i.userId": id }] }
+    )
+      .then((result) => {})
+      .catch((err) => {});
     Question.updateMany(
       { userId: id },
       { $set: { profileImage: req.file.filename } }
@@ -846,17 +869,9 @@ router.post("/login", (req, res, next) => {
             );
           }
 
-          const weeks = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-          ];
           loginDetails.push({
-            day: weeks[new Date().getDay() - 1],
+            day: req.body.day,
+
             time: new Date(),
             device: req.body.deviceType,
             otherDetails: JSON.parse(req.body.otherDetails),
