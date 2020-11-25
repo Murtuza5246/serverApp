@@ -576,7 +576,42 @@ router.get("/statement/profileFetcher/:userEmail", (req, res, next) => {
 //////////////////////////////////////
 router.patch("/statement/save/:userId", (req, res, next) => {
   const id = req.params.userId;
-  User.update({ _id: id }, { $set: { savedStatements: req.body } })
+  let arrayCheck = [];
+  User.findOne({ _id: id })
+    .then((data) => {
+      arrayCheck = data.savedStatements.filter(
+        (item) => item._id === req.body._id
+      );
+      if (arrayCheck.length === 0) {
+        User.updateOne({ _id: id }, { $push: { savedStatements: req.body } })
+          .then((result) => {
+            res.status(200).json({
+              message: "Saved",
+            });
+          })
+          .catch((err) => {
+            res.status(400).json({
+              error: err,
+            });
+          });
+      } else {
+        return res.status(200).json({
+          message: "Already saved",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+////////////////////////////////////
+//////////////////////////////////////
+router.patch("/statement/remove/:userId", (req, res, next) => {
+  const id = req.params.userId;
+  User.updateOne(
+    { _id: id },
+    { $pull: { savedStatements: { _id: req.body._id } } }
+  )
     .then((result) => {
       res.status(200).json({
         message: "Saved SuccessFully",

@@ -140,7 +140,7 @@ router.post(
           {
             from: "problemspotter35@gmail.com",
             to: req.body.email,
-            subject: "Sending Email using Node.js",
+            subject: "Statement uploaded",
             html: `<h1>Hi ${req.body.identifier},</h1><br/><p>your statement is successfully submitted on problemspotter.com for review, once it is done we will let you know about this</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg'  /><h4>The contributor like you is holding the civil engineering society in this technology era<h4/>`,
           },
           function (error, info) {
@@ -248,7 +248,7 @@ router.post(
           {
             from: "problemspotter35@gmail.com",
             to: req.body.email,
-            subject: "Sending Email using Node.js",
+            subject: "Statement uploaded",
             // text: `Hi ${req.body.identifier}, thank you for your contribution on problemspotter.com.
             //       You will get to know once your statement get an action by admin`,
             html: `<h1>Hi ${req.body.identifier},</h1><br/><p>your statement is successfully submitted on problemspotter.com for review, once it is done we will let you know about this</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg'  /><h4>The contributor like you is holding the civil engineering society in this technology era<h4/>`,
