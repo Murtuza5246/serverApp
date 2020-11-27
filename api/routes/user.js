@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const upload = require("./imageUploadEngine");
+const uploadSignUp = require("./signUpImage");
 const GridFsStorage = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
 let ObjectId = require("mongodb").ObjectID;
@@ -42,7 +43,7 @@ conn.once("open", () => {
 //////////////////////////////////////////////
 router.post(
   "/signup/:userId",
-  upload.single("profileImage"),
+  uploadSignUp.single("profileImage"),
   (req, res, next) => {
     User.find({ email: req.body.email })
       .exec()
@@ -66,7 +67,8 @@ router.post(
                 "_" +
                 Math.random(0, 10000);
 
-              let userId = new mongoose.Types.ObjectId();
+              const userId = req.file.filename;
+
               if (
                 req.body.authType === "Identifier" ||
                 req.body.authType === "Admin"
@@ -135,6 +137,7 @@ router.post(
                   res.status(500).json({
                     error: err,
                   });
+                  console.log(err);
                 });
             }
           });

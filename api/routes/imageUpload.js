@@ -8,6 +8,7 @@ const GridFsStorage = require("multer-gridfs-storage");
 const Grid = require("gridfs-stream");
 const methodOverride = require("method-override");
 const User = require("../model/user");
+let ObjectId = require("mongodb").ObjectID;
 
 const app = express();
 const router = express.Router();
@@ -63,30 +64,24 @@ router.get("/image/:filename", (req, res) => {
 });
 //////////////////////////////////////////////////
 router.get("/profile/:userId", (req, res) => {
-  User.findOne({ _id: req.params.userId }, { profileImage: true })
-    .then((result) => {
-      gfs.files.findOne({ filename: result.profileImage }, (err, file) => {
-        // Check if the input is a valid image or not
-        if (!file || file.length === 0) {
-          return res.status(404).json({
-            err: "No file exists",
-          });
-        }
-        if (
-          file.contentType === "image/jpeg" ||
-          file.contentType === "image/png"
-        ) {
-          // Read output to browser
-          const readstream = gfs.createReadStream(file.filename);
-          readstream.pipe(res);
-        } else {
-          res.status(404).json({
-            err: "Not an image",
-          });
-        }
+  gfs.files.findOne({ filename: req.params.userId }, (err, file) => {
+    // Check if the input is a valid image or not
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No file exists",
       });
-    })
-    .catch();
+    }
+    if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+      // Read output to browser
+      const readstream = gfs.createReadStream(file.filename);
+      readstream.pipe(res);
+    } else {
+      console.log(err);
+      res.status(404).json({
+        err: "Not an image",
+      });
+    }
+  });
 });
 
 module.exports = router;
