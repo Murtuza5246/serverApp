@@ -13,6 +13,7 @@ const upload = require("./imageUploadEngine");
 const Question = require("../model/question.js");
 const { json } = require("body-parser");
 const nodemailer = require("nodemailer");
+let ObjectId = require("mongodb").ObjectID;
 
 let transporter = nodemailer.createTransport({
   service: "gmail",
@@ -285,6 +286,9 @@ router.get("/admin/approved/:email", (req, res) => {
       console.log(err);
     });
 });
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
 router.patch("/updateFields/:id", checkAuth, (req, res) => {
   const id = req.params.id;
   const { updatedTitle, updatedContent } = req.body;
@@ -322,6 +326,26 @@ router.patch("/updateFields/:id", checkAuth, (req, res) => {
     });
 });
 ///////////////////////////////////
+
+router.patch("/replies/:statementId/:commentId", (req, res) => {
+  const statementId = req.params.statementId;
+  const commentId = req.params.commentId;
+  Statement.updateOne(
+    { _id: ObjectId(statementId), "comments._id": ObjectId(commentId) },
+    { $push: { "comments.$.replies": req.body } }
+  )
+    .then((result) => {
+      return res.status(200).json({
+        message: "reply added",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(400).json({
+        error: err,
+      });
+    });
+});
 
 ///////////////////////////////////
 
@@ -583,6 +607,7 @@ router.patch("/new/answer/:id", (req, res) => {
   const id = req.params.id;
 
   let newQuestion = {
+    _id: new mongoose.Types.ObjectId(),
     answer: req.body.answer,
     name: req.body.name,
     profileImage: req.body.profileImage,
@@ -590,6 +615,7 @@ router.patch("/new/answer/:id", (req, res) => {
     date: req.body.date,
     userId: req.body.userId,
     authType: req.body.authType,
+    replies: [],
   };
 
   Statement.findById(id)

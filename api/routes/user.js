@@ -848,19 +848,9 @@ router.patch(
       { $set: { "comments.$[i].profileImage": req.file.filename } },
       { arrayFilters: [{ "i.userId": id }] }
     )
-      .then((result) => {
-        // res.status(200).json({
-        //   message: "may be updated",
-        //   data: result,
-        //   file: req.file.filename,
-        // });
-      })
-      .catch((err) => {
-        // res.status(400).json({
-        //   error: err,
-        //   message: "not updated",
-        // });
-      });
+      .then((result) => {})
+      .catch((err) => {});
+
     Question.updateMany(
       {},
       { $set: { "likes.$[i].profileImage": req.file.filename } },
