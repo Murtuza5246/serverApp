@@ -40,110 +40,114 @@ conn.once("open", () => {
 });
 
 //////////////////////////////////////////////
-router.post("/signup", upload.single("profileImage"), (req, res, next) => {
-  User.find({ email: req.body.email })
-    .exec()
-    .then((user) => {
-      if (user.length >= 1) {
-        return res.status(200).json({
-          message: "User already exists",
-        });
-      } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            res.status(500).json({
-              error: err,
-            });
-          } else {
-            let composeHandle = false;
-            let emailKey =
-              new mongoose.Types.ObjectId() +
-              "_" +
-              new mongoose.Types.ObjectId() +
-              "_" +
-              Math.random(0, 10000);
-
-            let userId = new mongoose.Types.ObjectId();
-            if (
-              req.body.authType === "Identifier" ||
-              req.body.authType === "Admin"
-            ) {
-              composeHandle = true;
-            }
-            transporter.sendMail(
-              {
-                from: "problemspotter35@gmail.com",
-                to: req.body.email,
-                subject: "Verify your email",
-                // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
-                //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
-                html: `<h1>Hi ${
-                  req.body.fName + "  " + req.body.lName
-                }</h1><br/><p>Dear user of problemspotter.com , to use account features on problemspotter.com you first need to verify your email. <strong>The email verification link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for verification <strong><a href='problemspotter.com/account/authentication/${userId}/${emailKey}'  >problemspotter.com/account/authentication/${userId}/${emailKey}</a></strong></p><p>Love from problemspotter.com ❤</p>`,
-              },
-              function (error, info) {
-                if (error) {
-                  console.log(error);
-                } else {
-                  console.log("Email sent: " + info.response);
-                }
-              }
-            );
-
-            const user = new User({
-              _id: userId,
-              profileImage: req.file.filename,
-              profileImageId: req.file.id,
-              authType: req.body.authType,
-              email: req.body.email,
-              password: hash,
-              fName: req.body.fName,
-              lName: req.body.lName,
-              contact: req.body.contact,
-              dob: req.body.dob,
-              cName: req.body.cName,
-              cAddress: req.body.cAddress,
-              city: req.body.city,
-              about: {},
-              nState: req.body.nState,
-              pCode: req.body.pCode,
-              pString: req.body.pString,
-              experience: req.body.experience,
-              creationDate: req.body.creationDate,
-              creationTime: req.body.creationTime,
-              savedStatements: [],
-              followers: [],
-              activity: [],
-              composeHandle: composeHandle,
-              OName: req.body.OName,
-              OAddress: req.body.OAddress,
-              field: req.body.field,
-              emailVerified: false,
-              emailKey,
-            });
-            user
-              .save()
-              .then((result21) => {
-                res.status(201).json({
-                  message: "User Created successfully",
-                });
-              })
-              .catch((err) => {
-                res.status(500).json({
-                  error: err,
-                });
+router.post(
+  "/signup/:userId",
+  upload.single("profileImage"),
+  (req, res, next) => {
+    User.find({ email: req.body.email })
+      .exec()
+      .then((user) => {
+        if (user.length >= 1) {
+          return res.status(200).json({
+            message: "User already exists",
+          });
+        } else {
+          bcrypt.hash(req.body.password, 10, (err, hash) => {
+            if (err) {
+              res.status(500).json({
+                error: err,
               });
-          }
+            } else {
+              let composeHandle = false;
+              let emailKey =
+                new mongoose.Types.ObjectId() +
+                "_" +
+                new mongoose.Types.ObjectId() +
+                "_" +
+                Math.random(0, 10000);
+
+              let userId = new mongoose.Types.ObjectId();
+              if (
+                req.body.authType === "Identifier" ||
+                req.body.authType === "Admin"
+              ) {
+                composeHandle = true;
+              }
+              transporter.sendMail(
+                {
+                  from: "problemspotter35@gmail.com",
+                  to: req.body.email,
+                  subject: "Verify your email",
+                  // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
+                  //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
+                  html: `<h1>Hi ${
+                    req.body.fName + "  " + req.body.lName
+                  }</h1><br/><p>Dear user of problemspotter.com , to use account features on problemspotter.com you first need to verify your email. <strong>The email verification link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for verification <strong><a href='problemspotter.com/account/authentication/${userId}/${emailKey}'  >problemspotter.com/account/authentication/${userId}/${emailKey}</a></strong></p><p>Love from problemspotter.com ❤</p>`,
+                },
+                function (error, info) {
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log("Email sent: " + info.response);
+                  }
+                }
+              );
+
+              const user = new User({
+                _id: userId,
+                profileImage: req.file.filename,
+                profileImageId: req.file.id,
+                authType: req.body.authType,
+                email: req.body.email,
+                password: hash,
+                fName: req.body.fName,
+                lName: req.body.lName,
+                contact: req.body.contact,
+                dob: req.body.dob,
+                cName: req.body.cName,
+                cAddress: req.body.cAddress,
+                city: req.body.city,
+                about: {},
+                nState: req.body.nState,
+                pCode: req.body.pCode,
+                pString: req.body.pString,
+                experience: req.body.experience,
+                creationDate: req.body.creationDate,
+                creationTime: req.body.creationTime,
+                savedStatements: [],
+                followers: [],
+                activity: [],
+                composeHandle: composeHandle,
+                OName: req.body.OName,
+                OAddress: req.body.OAddress,
+                field: req.body.field,
+                emailVerified: false,
+                emailKey,
+              });
+              user
+                .save()
+                .then((result21) => {
+                  res.status(201).json({
+                    message: "User Created successfully",
+                  });
+                })
+                .catch((err) => {
+                  res.status(500).json({
+                    error: err,
+                  });
+                });
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        res.status(400).json({
+          message: "error happened ",
+          error: err,
         });
-      }
-    })
-    .catch((err) => {
-      res.status(400).json({
-        message: "error happened ",
-        error: err,
       });
-    });
-});
+  }
+);
 
 ////////////////////////////////
 
