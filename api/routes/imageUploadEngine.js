@@ -40,8 +40,7 @@ const storage = new GridFsStorage({
   url: mongoURI,
   file: (req, file) => {
     return new Promise((resolve, reject) => {
-      const filename =
-        "problemspotter.com" + "_" + Date.now() + "_" + file.originalname;
+      const filename = req.params.userId;
       const fileInfo = {
         filename: filename,
         bucketName: "uploads",

@@ -799,65 +799,6 @@ router.patch(
           error: err,
         });
       });
-    Statement.updateMany(
-      {},
-      { $set: { "comments.$[i].profileImage": req.file.filename } },
-      { arrayFilters: [{ "i.userId": id }] }
-    )
-      .then((result) => {})
-      .catch((err) => {});
-    User.updateMany(
-      {},
-      { $set: { "following.$[i].profileImage": req.file.filename } },
-      { arrayFilters: [{ "i.userId": id }] }
-    )
-      .then((result) => {})
-      .catch((err) => {});
-    User.updateMany(
-      {},
-      { $set: { "followers.$[i].profileImage": req.file.filename } },
-      { arrayFilters: [{ "i.userId": id }] }
-    )
-      .then((result) => {})
-      .catch((err) => {});
-    Question.updateMany(
-      { userId: id },
-      { $set: { profileImage: req.file.filename } }
-    )
-      .then((result) => {
-        // res.status(200).json({
-        //   message: "may be updated",
-        //   data: result,
-        //   file: req.file.filename,
-        // });
-      })
-      .catch((err) => {
-        // res.status(400).json({
-        //   error: err,
-        //   message: "not updated",
-        // });
-      });
-    Statement.updateMany(
-      { userId: id },
-      { $set: { profileImage: req.file.filename } }
-    )
-      .then((result) => {})
-      .catch((err) => {});
-    Question.updateMany(
-      {},
-      { $set: { "comments.$[i].profileImage": req.file.filename } },
-      { arrayFilters: [{ "i.userId": id }] }
-    )
-      .then((result) => {})
-      .catch((err) => {});
-
-    Question.updateMany(
-      {},
-      { $set: { "likes.$[i].profileImage": req.file.filename } },
-      { arrayFilters: [{ "i.userId": id }] }
-    )
-      .then()
-      .catch();
   }
 );
 
