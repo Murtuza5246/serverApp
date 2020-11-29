@@ -45,6 +45,8 @@ const userSchema = mongoose.Schema({
   activity: { type: Array },
   facebook: { type: String },
   following: { type: Array },
+  ban: { type: Object },
+  pBan: { type: Object },
 });
 
 const Order = mongoose.model("User", userSchema);

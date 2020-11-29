@@ -125,6 +125,16 @@ router.post(
                 field: req.body.field,
                 emailVerified: false,
                 emailKey,
+                ban: false,
+                pBan: false,
+                ban: {
+                  action: false,
+                  reason: "",
+                },
+                pBan: {
+                  action: false,
+                  reason: "",
+                },
               });
               user
                 .save()
@@ -478,7 +488,7 @@ router.get("/all", (req, res) => {
     {},
     { lName: true, fName: true, _id: true, profileImage: true, email: true }
   )
-    .then((result) => {
+    .then(async (result) => {
       const newArray = [];
       for (let i = 0; i < result.length; i++) {
         newArray.push({
@@ -487,14 +497,14 @@ router.get("/all", (req, res) => {
           name: result[i].fName + " " + result[i].lName + i,
           value: result[i].fName + " " + result[i].lName,
           url: `https://problemspotter.com/user/details/${result[i]._id}`,
-          avatar: `https://my-server-problemspotter.herokuapp.com/image/image/${result[i].profileImage}`,
+          avatar: `https://my-server-problemspotter.herokuapp.com/image/profile/${result[i]._id}`,
 
           userId: result[i]._id,
           link: `https://problemspotter.com/user/details/${result[i]._id}`,
           email: result[i].email,
         });
       }
-      res.status(200).json({
+      await res.status(200).json({
         members: newArray,
       });
     })
@@ -824,6 +834,32 @@ router.post("/login", (req, res, next) => {
           message: "Check your email for email verification",
         });
       }
+      if (user[0].ban.action) {
+        return res.status(200).json({
+          message: `Your account is temporarily closed due to ${user[0].ban.reason}`,
+        });
+      }
+      if (user[0].pBan.action) {
+        return res.status(200).json({
+          message: `Your account is permanently closed due to ${user[0].pBan.reason}`,
+        });
+      }
+      function isJson(str) {
+        try {
+          JSON.parse(str);
+        } catch (e) {
+          return false;
+        }
+        return true;
+      }
+      let otherDetails = {};
+      if (isJson(req.body.otherDetails)) {
+        otherDetails = JSON.parse(req.body.otherDetails);
+      } else {
+        res.status(200).json({
+          message: "something went wrong",
+        });
+      }
 
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
@@ -846,7 +882,7 @@ router.post("/login", (req, res, next) => {
 
             time: new Date(),
             device: req.body.deviceType,
-            otherDetails: JSON.parse(req.body.otherDetails),
+            otherDetails: otherDetails,
           });
           User.updateOne(
             { _id: user[0]._id },
@@ -879,6 +915,7 @@ router.post("/login", (req, res, next) => {
             userId: user[0]._id,
             fName: user[0].fName,
             lName: user[0].lName,
+            composeHandle: user[0].composeHandle,
           });
         }
         res.status(200).json({
