@@ -47,6 +47,8 @@ const userSchema = mongoose.Schema({
   following: { type: Array },
   ban: { type: Object },
   pBan: { type: Object },
+  numberVerified: { type: Boolean },
+  number: { Type: String },
 });
 
 const Order = mongoose.model("User", userSchema);

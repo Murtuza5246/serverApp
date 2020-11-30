@@ -124,6 +124,7 @@ router.post(
                 OAddress: req.body.OAddress,
                 field: req.body.field,
                 emailVerified: false,
+                numberVerified: false,
                 emailKey,
                 ban: false,
                 pBan: false,
@@ -901,6 +902,7 @@ router.post("/login", (req, res, next) => {
               lName: user[0].lName,
               verified: user[0].verified,
               composeHandle: user[0].composeHandle,
+              numberVerified: user[0].numberVerified,
             },
             process.env.JWT_TOKEN,
             {
@@ -916,6 +918,7 @@ router.post("/login", (req, res, next) => {
             fName: user[0].fName,
             lName: user[0].lName,
             composeHandle: user[0].composeHandle,
+            numberVerified: user[0].numberVerified,
           });
         }
         res.status(200).json({
@@ -963,6 +966,29 @@ router.get("/identifier/details/:id", (req, res) => {
     .catch((err) => {
       res.status(404).json({
         error: err,
+      });
+    });
+});
+
+///////////////////////////////////////////////////////
+
+router.patch("/number/verification", checkAuth, (req, res) => {
+  const id = req.body.userId;
+  const number = req.body.number;
+  User.updateOne(
+    { _id: ObjectId(id) },
+    { $set: { numberVerified: true, number: number } },
+    { upsert: true }
+  )
+    .then((result) => {
+      return res.status(200).json({
+        message: "Number verified successfully",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json({
+        message: "something went wrong",
       });
     });
 });
