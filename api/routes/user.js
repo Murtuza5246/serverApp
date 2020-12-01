@@ -125,6 +125,7 @@ router.post(
                 field: req.body.field,
                 emailVerified: false,
                 numberVerified: false,
+                number: "",
                 emailKey,
                 ban: false,
                 pBan: false,
@@ -439,13 +440,30 @@ router.patch("/forget/newPassword/:forgetKey", (req, res) => {
 
 ////////////////////////////////////////////////////////
 
-router.patch("/account/authentication/:id/:emailKey", (req, res) => {
+router.patch("/account/authentication/:id/:emailKey/:number", (req, res) => {
   const id = req.params.id;
-  const emailKey = req.params.emailKey + "_" + "submitted";
+  const emailKey = new mongoose.Types.ObjectId();
+  const number = req.params.number;
+  User.find({ emailKey: req.params.emailKey })
+    .then((result5) => {
+      if (result5.length === 0) {
+        res.status(400).json({
+          message: "user not found",
+        });
+      }
+    })
+    .catch();
 
-  User.update(
-    { emailKey: req.params.emailKey },
-    { emailVerified: true, emailKey }
+  User.updateOne(
+    { emailKey: req.params.emailKey, _id: ObjectId(id), emailVerified: false },
+    {
+      $set: {
+        emailVerified: true,
+        emailKey,
+        number,
+        numberVerified: true,
+      },
+    }
   )
     .then((result) => {
       res.status(200).json({
