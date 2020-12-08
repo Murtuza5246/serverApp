@@ -10,10 +10,12 @@ let ObjectId = require("mongodb").ObjectID;
 const nodemailer = require("nodemailer");
 
 let transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtpout.secureserver.net",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
-    user: "problemspotter35@gmail.com",
-    pass: "Problemspotter@5246",
+    user: "support@problemspotter.com", // generated ethereal user
+    pass: process.env.EMAIL_PASS, // generated ethereal password
   },
 });
 ////////////////////////////////////
@@ -48,7 +50,7 @@ router.post("/new/ask", (req, res, next) => {
               let mentionString = mentions.toString();
               transporter.sendMail(
                 {
-                  from: "problemspotter35@gmail.com",
+                  from: "support@problemspotter.com",
                   to: mentionString,
                   subject: "Mentioned in question",
                   html: `<h3>Hey there,</h3><h6>You got mentioned in a question.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>Check what happened.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -82,7 +84,7 @@ router.post("/new/ask", (req, res, next) => {
             });
             transporter.sendMail(
               {
-                from: "problemspotter35@gmail.com",
+                from: "support@problemspotter.com",
                 to: email,
                 subject: "Question on problemspotter.com",
 
@@ -329,10 +331,10 @@ router.patch("/new/answer/:id", (req, res, next) => {
           });
           transporter.sendMail(
             {
-              from: "problemspotter35@gmail.com",
+              from: "support@problemspotter.com",
               to: req.body.questionDetails.uploadedByEmail,
               subject: "Question-Answer on problemspotter.com",
-              html: `<h1>Hi ${req.body.questionDetails.uploadedByName}</h1><h3>The question <strong>"${req.body.questionDetails.question}"</strong></h3><h4>is got a response</h4><br/><h4>Check that out <a href='problemspotter.com/qanda?questionId=${req.body.questionDetails._id}' >here</a></h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${req.body.questionDetails._id}'>here</a></h3><br/><p>Hope you get your thoughts clear.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+              html: `<h1>Hi ${req.body.questionDetails.uploadedByName}</h1><h3>The question </h3><h4>is got a response</h4><br/><h4>Check that out <a href='problemspotter.com/qanda?questionId=${req.body.questionDetails._id}' >here</a></h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${req.body.questionDetails._id}'>here</a></h3><br/><p>Hope you get your thoughts clear.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
             },
             function (error, info) {
               if (error) {

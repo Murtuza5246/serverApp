@@ -16,10 +16,12 @@ const nodemailer = require("nodemailer");
 let ObjectId = require("mongodb").ObjectID;
 
 let transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtpout.secureserver.net",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
-    user: "problemspotter35@gmail.com",
-    pass: "Problemspotter@5246",
+    user: "support@problemspotter.com", // generated ethereal user
+    pass: process.env.EMAIL_PASS, // generated ethereal password
   },
 });
 ////////////////////////////////////////////////
@@ -97,7 +99,7 @@ router.post(
           let mentionString = mentionedUsers.toString();
           transporter.sendMail(
             {
-              from: "problemspotter35@gmail.com",
+              from: "support@problemspotter.com",
               to: mentionString,
               subject: "Mentioned in statement",
               html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -139,7 +141,7 @@ router.post(
         });
         transporter.sendMail(
           {
-            from: "problemspotter35@gmail.com",
+            from: "support@problemspotter.com",
             to: req.body.email,
             subject: "Statement uploaded",
             html: `<h1>Hi ${req.body.identifier},</h1><br/><p>your statement is successfully submitted on problemspotter.com for review, once it is done we will let you know about this</p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg'  /><h4>The contributor like you is holding the civil engineering society in this technology era<h4/>`,
@@ -204,7 +206,7 @@ router.post(
           let mentionString = mentionedUsers.toString();
           transporter.sendMail(
             {
-              from: "problemspotter35@gmail.com",
+              from: "support@problemspotter.com",
               to: mentionString,
               subject: "Mentioned in statement",
               html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -247,7 +249,7 @@ router.post(
         });
         transporter.sendMail(
           {
-            from: "problemspotter35@gmail.com",
+            from: "support@problemspotter.com",
             to: req.body.email,
             subject: "Statement uploaded",
             // text: `Hi ${req.body.identifier}, thank you for your contribution on problemspotter.com.
@@ -440,7 +442,7 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
       });
       transporter.sendMail(
         {
-          from: "problemspotter35@gmail.com",
+          from: "support@problemspotter.com",
           to: req.body.email,
           subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
@@ -501,7 +503,7 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
       });
       transporter.sendMail(
         {
-          from: "problemspotter35@gmail.com",
+          from: "support@problemspotter.com",
           to: req.body.email,
           subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
@@ -626,7 +628,7 @@ router.patch("/new/answer/:id", (req, res) => {
         let mentionString = mentionedUsers.toString();
         transporter.sendMail(
           {
-            from: "problemspotter35@gmail.com",
+            from: "support@problemspotter.com",
             to: mentionString,
             subject: "Mentioned in statement comment",
             html: `<h3>Hey there,</h3><h4>You got mentioned in a statement comment section.</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The statement is live  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,

@@ -24,10 +24,12 @@ const nodemailer = require("nodemailer");
 const { json } = require("body-parser");
 
 let transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtpout.secureserver.net",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
-    user: "problemspotter35@gmail.com",
-    pass: "Problemspotter@5246",
+    user: "support@problemspotter.com", // generated ethereal user
+    pass: process.env.EMAIL_PASS, // generated ethereal password
   },
 });
 
@@ -77,7 +79,7 @@ router.post(
               }
               transporter.sendMail(
                 {
-                  from: "problemspotter35@gmail.com",
+                  from: "support@problemspotter.com",
                   to: req.body.email,
                   subject: "Verify your email",
                   // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
@@ -193,7 +195,7 @@ router.patch("/about/update/:id", (req, res) => {
         let mentionString = mentionedUsers.toString();
         transporter.sendMail(
           {
-            from: "problemspotter35@gmail.com",
+            from: "support@problemspotter.com",
             to: mentionString,
             subject: "Mentioned in About section",
             html: `<h3>Hey there,</h3><h6>You got mentioned in someone's about section.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Check there about section by clicking <a href='https://problemspotter.com/user/details/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
@@ -298,7 +300,7 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
             });
             transporter.sendMail(
               {
-                from: "problemspotter35@gmail.com",
+                from: "support@problemspotter.com",
                 to: result2[0].email,
                 subject: "New follower",
                 // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
@@ -359,7 +361,7 @@ router.patch("/forget", (req, res) => {
           });
         transporter.sendMail(
           {
-            from: "problemspotter35@gmail.com",
+            from: "support@problemspotter.com",
             to: req.body.email,
             subject: "Reset password link",
             // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
@@ -412,7 +414,7 @@ router.patch("/forget/newPassword/:forgetKey", (req, res) => {
                 });
                 transporter.sendMail(
                   {
-                    from: "problemspotter35@gmail.com",
+                    from: "support@problemspotter.com",
                     to: result[0].email,
                     subject: "Password change",
                     // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
@@ -473,7 +475,7 @@ router.patch("/account/authentication/:id/:emailKey/:number", (req, res) => {
         .then((response) => {
           transporter.sendMail(
             {
-              from: "problemspotter35@gmail.com",
+              from: "support@problemspotter.com",
               to: response.email,
               subject: "Verification of email is successfully completed",
               // text: `Hi ${req.body.fName}, the statement which you have uploaded on problemspotter is approved.
