@@ -12,10 +12,10 @@ const nodemailer = require("nodemailer");
 let transporter = nodemailer.createTransport({
   host: "smtpout.secureserver.net",
   port: 465,
-  secure: true, // true for 465, false for other ports
+  secure: true,
   auth: {
-    user: "support@problemspotter.com", // generated ethereal user
-    pass: process.env.EMAIL_PASS, // generated ethereal password
+    user: "support@problemspotter.com",
+    pass: process.env.EMAIL_PASS,
   },
 });
 ////////////////////////////////////

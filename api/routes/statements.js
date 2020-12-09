@@ -2,16 +2,17 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
-const GridFsStorage = require("multer-gridfs-storage");
+// const GridFsStorage = require("multer-gridfs-storage");
 const checkAuth = require("../middleWare/check-auth.js");
 const Statement = require("../model/statements");
 const User = require("../model/user");
-const fileUpload = require("express-fileupload");
-const Upload = require("../model/upload");
-const app = express();
-const upload = require("./imageUploadEngine");
+// const fileUpload = require("express-fileupload");
+// const Upload = require("../model/upload");
+// const app = express();
+// const upload = require("./imageUploadEngine");
+const statementUpload = require("./statementImageUpload");
 const Question = require("../model/question.js");
-const { json } = require("body-parser");
+// const { json } = require("body-parser");
 const nodemailer = require("nodemailer");
 let ObjectId = require("mongodb").ObjectID;
 
@@ -60,7 +61,7 @@ router.get("/", checkAuth, (req, res, next) => {
 router.post(
   "/compose",
   checkAuth,
-  upload.array("statementImage", 10),
+  statementUpload.array("statementImage", 10),
   (req, res, next) => {
     let keywordData = JSON.parse(req.body.keyword);
     let fieldsArray = JSON.parse(req.body.field);
@@ -167,7 +168,7 @@ router.post(
 router.post(
   "/compose/textonly",
   checkAuth,
-  upload.single("statementImage"),
+  statementUpload.single("statementImage"),
   (req, res, next) => {
     let keywordData = JSON.parse(req.body.keyword);
     let fieldsArray = JSON.parse(req.body.field);
