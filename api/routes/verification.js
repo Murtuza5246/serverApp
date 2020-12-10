@@ -6,6 +6,17 @@ const Verify = require("../model/verification");
 let ObjectId = require("mongodb").ObjectID;
 const bcrypt = require("bcrypt");
 
+const nodemailer = require("nodemailer");
+
+let transporter = nodemailer.createTransport({
+  host: "smtpout.secureserver.net",
+  port: 465,
+  secure: true, // true for 465, false for other ports
+  auth: {
+    user: "support@problemspotter.com", // generated ethereal user
+    pass: process.env.EMAIL_PASS, // generated ethereal password
+  },
+});
 router.patch("/verification/:email/:password/:type", (req, res) => {
   const pass = req.params.password;
   const email = req.params.email;
@@ -45,6 +56,22 @@ router.patch("/verification/:email/:password/:type", (req, res) => {
                             res.status(200).json({
                               message: "updated successfully",
                             });
+                            transporter.sendMail(
+                              {
+                                from: "support@problemspotter.com",
+                                to: email,
+                                subject: "Verified",
+
+                                html: `<h2><strong>Congratulations</strong>, Your account is verified</h2><br/><p>We have verified your account, And we have added a genuine badge besides your name.</p><img src="https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg" alt="banner" /><p>Love from problemspotter.com ❤</p>`,
+                              },
+                              function (error, info) {
+                                if (error) {
+                                  console.log(error);
+                                } else {
+                                  console.log("Email sent: " + info.response);
+                                }
+                              }
+                            );
                           })
                           .catch((err) => {
                             res.status(200).json({
