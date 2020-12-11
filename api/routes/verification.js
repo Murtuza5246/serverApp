@@ -146,7 +146,6 @@ router.patch("/verification/:email/:password/:type", (req, res) => {
 router.get("/verification/users", (req, res) => {
   Verify.find({ filter: "myNewFilter" })
     .then((result) => {
-      console.log(result[0].users);
       res.status(200).json({
         data: result[0].users,
       });

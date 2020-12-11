@@ -34,6 +34,7 @@ const statementsSchema = mongoose.Schema({
   keywords: Array,
   attention: { type: Boolean },
   mSecond: { type: Number },
+  label: { type: String },
 });
 
 const statement = mongoose.model("Statements", statementsSchema);

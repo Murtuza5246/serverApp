@@ -89,6 +89,7 @@ router.post(
       organizationLink: req.body.organizationLink,
       approved: false,
       link: req.body.link,
+      label: req.body.label,
       linkTitle: req.body.linkTitle,
     });
     // res.status(201).send();
@@ -198,6 +199,7 @@ router.post(
       approved: req.body.approval,
       keywords: keywordData,
       link: req.body.link,
+      label: req.body.label,
     });
     statement
       .save()
