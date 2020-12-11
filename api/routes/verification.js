@@ -43,14 +43,17 @@ router.patch("/verification/:email/:password/:type", (req, res) => {
                   Verify.find({ filter: "myNewFilter" })
                     .then((result1) => {
                       const checkList = result1[0].users.filter(
-                        (item) =>
-                          toString(item.userId) === toString(result2[0]._id)
+                        (item) => item.userId === result2[0]._id.toHexString()
                       );
 
                       if (checkList.length === 0) {
                         Verify.update(
                           { filter: "myNewFilter" },
-                          { $push: { users: { userId: result2[0]._id } } }
+                          {
+                            $push: {
+                              users: { userId: result2[0]._id.toHexString() },
+                            },
+                          }
                         )
                           .then((result3) => {
                             res.status(200).json({

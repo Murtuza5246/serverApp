@@ -22,6 +22,7 @@ const user = process.env.MONGO_PS;
 const password = process.env.MONGO_USER;
 const DB = process.env.MONGO_DB;
 const uri = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mongodb.net:27017,cluster020-shard-00-01-ndanr.mongodb.net:27017,cluster020-shard-00-02-ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true`;
+// const uri = `mongodb://${user}:${password}>@cluster020-shard-00-00.ndanr.mongodb.net:27017,cluster020-shard-00-01.ndanr.mongodb.net:27017,cluster020-shard-00-02.ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true&w=majority`;
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
