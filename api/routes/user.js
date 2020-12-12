@@ -926,7 +926,7 @@ router.post("/login", (req, res, next) => {
             },
             process.env.JWT_TOKEN,
             {
-              expiresIn: "1h",
+              expiresIn: "12h",
             }
           );
           return res.status(200).json({

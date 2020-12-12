@@ -14,6 +14,7 @@ const userRoutes = require("./api/routes/user");
 const pStringRoutes = require("./api/routes/pString");
 const statementRoutes = require("./api/routes/statements");
 const imageUploadRoutes = require("./api/routes/imageUpload");
+const identifierPost = require("./api/routes/identifierPost");
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -60,6 +61,7 @@ app.use("/pString", pStringRoutes);
 app.use("/question", questionRoutes);
 app.use("/verify", verification);
 app.use("/image", imageUploadRoutes);
+app.use("/identifierPost", identifierPost);
 
 app.use((req, res, next) => {
   const error = new Error("Not found page");
