@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const identifierPostSchema = mongoose.Schema({
+const learnerPostSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   uploadedByName: { type: String },
   uploadedByEmail: { type: String },
@@ -11,10 +11,12 @@ const identifierPostSchema = mongoose.Schema({
   date: { type: String },
   authType: { type: String },
   userId: { type: String },
+  doing: { type: String },
+  at: { type: String },
   likes: { type: Array },
   mentions: { type: Array },
   onlyMe: { type: Boolean },
 });
 
-const IdentifierPost = mongoose.model("identifierPost", identifierPostSchema);
-module.exports = IdentifierPost;
+const LearnerPost = mongoose.model("learnerPost", learnerPostSchema);
+module.exports = LearnerPost;

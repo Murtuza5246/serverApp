@@ -49,6 +49,7 @@ const userSchema = mongoose.Schema({
   pBan: { type: Object },
   numberVerified: { type: Boolean },
   number: { Type: String },
+  canApprove: { type: Boolean },
 });
 
 const Order = mongoose.model("User", userSchema);

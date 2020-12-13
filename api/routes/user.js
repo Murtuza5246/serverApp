@@ -62,6 +62,7 @@ router.post(
               });
             } else {
               let composeHandle = false;
+              let canApprove = false;
               let emailKey =
                 new mongoose.Types.ObjectId() +
                 "_" +
@@ -70,10 +71,13 @@ router.post(
                 Math.random(0, 10000);
 
               const userId = req.file.filename;
-
+              if (req.body.authType === "Admin") {
+                canApprove = true;
+              }
               if (
                 req.body.authType === "Identifier" ||
-                req.body.authType === "Admin"
+                req.body.authType === "Admin" ||
+                req.body.authType === "Professor"
               ) {
                 composeHandle = true;
               }
@@ -127,6 +131,7 @@ router.post(
                 field: req.body.field,
                 emailVerified: false,
                 numberVerified: false,
+                canApprove: canApprove,
                 number: "",
                 emailKey,
                 ban: false,
@@ -922,7 +927,7 @@ router.post("/login", (req, res, next) => {
               lName: user[0].lName,
               verified: user[0].verified,
               composeHandle: user[0].composeHandle,
-              numberVerified: user[0].numberVerified,
+              canApprove: user[0].canApprove,
             },
             process.env.JWT_TOKEN,
             {
@@ -938,7 +943,7 @@ router.post("/login", (req, res, next) => {
             fName: user[0].fName,
             lName: user[0].lName,
             composeHandle: user[0].composeHandle,
-            numberVerified: user[0].numberVerified,
+            canApprove: user[0].canApprove,
           });
         }
         res.status(200).json({

@@ -6,7 +6,7 @@ let ObjectId = require("mongodb").ObjectID;
 const statementUpload = require("./statementImageUpload");
 
 ///////models
-const IdentifierPost = require("../model/identifierPost");
+const LearnerPost = require("../model/learner");
 ///////////////////////////////
 
 const checkAuth = require("../middleWare/check-auth");
@@ -55,9 +55,11 @@ router.post(
       userId,
       mentions,
       onlyMe,
+      doing,
+      at,
     } = req.body;
 
-    const identifierPost = new IdentifierPost({
+    const learnerPost = new LearnerPost({
       _id: new mongoose.Types.ObjectId(),
       uploadedByName: name,
       uploadedByEmail: email,
@@ -71,8 +73,10 @@ router.post(
       likes: [],
       mentions: mentions,
       onlyMe: onlyMe,
+      doing: doing,
+      at: at,
     });
-    identifierPost
+    learnerPost
       .save()
       .then((result) => {
         return res.status(200).json({
@@ -90,7 +94,7 @@ router.post(
 /////////////////////////////////////
 
 router.get("/posts", (req, res) => {
-  IdentifierPost.find()
+  LearnerPost.find()
     .then((result) => {
       return res.status(200).json(result);
     })
@@ -105,7 +109,7 @@ router.get("/posts", (req, res) => {
 /////////////////////////////////////
 
 router.patch("/delete/:id/:userId", checkAuth, (req, res) => {
-  IdentifierPost.find({ _id: ObjectId(req.params.id) })
+  LearnerPost.find({ _id: ObjectId(req.params.id) })
     .then((result) => {
       if (result.length === 0) {
         return res.status(200).json({
@@ -119,7 +123,7 @@ router.patch("/delete/:id/:userId", checkAuth, (req, res) => {
             root: "uploads",
           });
         }
-        IdentifierPost.deleteOne({ _id: req.params.id })
+        LearnerPost.deleteOne({ _id: req.params.id })
           .then((result2) => {
             return res.status(200).json({
               message: "deleted",
@@ -142,7 +146,7 @@ router.patch("/delete/:id/:userId", checkAuth, (req, res) => {
 /////////////////////////////////////
 
 router.patch("/comment/:id", (req, res) => {
-  IdentifierPost.updateOne(
+  LearnerPost.updateOne(
     { _id: ObjectId(req.params.id) },
     { $push: { comments: { _id: new mongoose.Types.ObjectId(), ...req.body } } }
   )
@@ -156,7 +160,7 @@ router.patch("/comment/:id", (req, res) => {
 /////////////////////////////////////
 
 router.get("/getcomments/:id", (req, res) => {
-  IdentifierPost.findOne({ _id: ObjectId(req.params.id) })
+  LearnerPost.findOne({ _id: ObjectId(req.params.id) })
     .then((result) => {
       return res.status(200).json({
         message: "success",
@@ -172,7 +176,7 @@ router.get("/getcomments/:id", (req, res) => {
 router.patch("/replies/:statementId/:commentId", (req, res) => {
   const statementId = req.params.statementId;
   const commentId = req.params.commentId;
-  IdentifierPost.updateOne(
+  LearnerPost.updateOne(
     { _id: ObjectId(statementId), "comments._id": ObjectId(commentId) },
     { $push: { "comments.$.replies": req.body } }
   )
@@ -191,7 +195,7 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
 /////////////////////////////////////
 
 router.patch("/like/:postId/:userId", (req, res) => {
-  IdentifierPost.find({ _id: ObjectId(req.params.postId) }).then((result) => {
+  LearnerPost.find({ _id: ObjectId(req.params.postId) }).then((result) => {
     if (result.length === 0) {
       return res.status(400).json({
         message: "not found",
@@ -202,7 +206,7 @@ router.patch("/like/:postId/:userId", (req, res) => {
         (item) => item.userId === req.params.userId
       );
       if (userLikeCheck.length === 0) {
-        IdentifierPost.updateOne(
+        LearnerPost.updateOne(
           { _id: ObjectId(req.params.postId) },
           { $push: { likes: { userId: req.params.userId } } }
         )
@@ -213,7 +217,7 @@ router.patch("/like/:postId/:userId", (req, res) => {
           })
           .catch();
       } else {
-        IdentifierPost.updateOne(
+        LearnerPost.updateOne(
           { _id: ObjectId(req.params.postId) },
           { $pull: { likes: { userId: req.params.userId } } }
         )
@@ -247,7 +251,7 @@ router.patch("/like/:postId/:userId", (req, res) => {
 /////////////////////////////////////
 
 router.patch("/privacy/:id/:userId", checkAuth, (req, res) => {
-  IdentifierPost.find({ _id: ObjectId(req.params.id) })
+  LearnerPost.find({ _id: ObjectId(req.params.id) })
     .then((result) => {
       if (result.length === 0) {
         return res.status(404).json({
@@ -256,7 +260,7 @@ router.patch("/privacy/:id/:userId", checkAuth, (req, res) => {
       } else {
         if (result[0].userId === req.params.userId) {
           if (result[0].onlyMe) {
-            IdentifierPost.updateOne(
+            LearnerPost.updateOne(
               { _id: ObjectId(req.params.id) },
               { $set: { onlyMe: false } }
             )
@@ -272,7 +276,7 @@ router.patch("/privacy/:id/:userId", checkAuth, (req, res) => {
                 });
               });
           } else {
-            IdentifierPost.updateOne(
+            LearnerPost.updateOne(
               { _id: ObjectId(req.params.id) },
               { $set: { onlyMe: true } }
             )
