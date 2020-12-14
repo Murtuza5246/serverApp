@@ -7,6 +7,7 @@ const statementUpload = require("./statementImageUpload");
 
 ///////models
 const LearnerPost = require("../model/learner");
+const User = require("../model/user");
 ///////////////////////////////
 
 const checkAuth = require("../middleWare/check-auth");
@@ -58,9 +59,9 @@ router.post(
       doing,
       at,
     } = req.body;
-
+    let objectNewId = new mongoose.Types.ObjectId();
     const learnerPost = new LearnerPost({
-      _id: new mongoose.Types.ObjectId(),
+      _id: objectNewId,
       uploadedByName: name,
       uploadedByEmail: email,
       postContent: postContent,
@@ -79,9 +80,24 @@ router.post(
     learnerPost
       .save()
       .then((result) => {
-        return res.status(200).json({
+        res.status(200).json({
           message: "Successfully uploaded",
         });
+        User.updateOne(
+          { _id: ObjectId(req.body.userId) },
+          {
+            $push: {
+              activity: {
+                action: "post",
+                link: `https://problemspotter.com/statements?learnerPost=${objectNewId}`,
+                date: new Date(),
+                day: new Date().getDay(),
+              },
+            },
+          }
+        )
+          .then()
+          .catch();
       })
       .catch((err) => {
         return res.status(400).json({
@@ -151,9 +167,24 @@ router.patch("/comment/:id", (req, res) => {
     { $push: { comments: { _id: new mongoose.Types.ObjectId(), ...req.body } } }
   )
     .then((result) => {
-      return res.status(200).json({
+      res.status(200).json({
         message: "Success",
       });
+      User.updateOne(
+        { _id: ObjectId(req.body.userId) },
+        {
+          $push: {
+            activity: {
+              action: "post",
+              link: `https://problemspotter.com/statements?learnerPost=${req.params.id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
     })
     .catch((err) => console.log(err));
 });
@@ -181,9 +212,24 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
     { $push: { "comments.$.replies": req.body } }
   )
     .then((result) => {
-      return res.status(200).json({
+      res.status(200).json({
         message: "reply added",
       });
+      User.updateOne(
+        { _id: ObjectId(req.body.userId) },
+        {
+          $push: {
+            activity: {
+              action: "post",
+              link: `https://problemspotter.com/statements?learnerPost=${statementId}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
     })
     .catch((err) => {
       console.log(err);
@@ -211,9 +257,24 @@ router.patch("/like/:postId/:userId", (req, res) => {
           { $push: { likes: { userId: req.params.userId } } }
         )
           .then((result1) => {
-            return res.status(200).json({
+            res.status(200).json({
               message: "Liked",
             });
+            User.updateOne(
+              { _id: ObjectId(req.params.userId) },
+              {
+                $push: {
+                  activity: {
+                    action: "post",
+                    link: `https://problemspotter.com/statements?learnerPost=${req.params.postId}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
           })
           .catch();
       } else {

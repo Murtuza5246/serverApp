@@ -285,21 +285,6 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
           }
         )
           .then((result) => {
-            User.updateOne(
-              { _id: followersId },
-              {
-                $push: {
-                  activity: {
-                    action: "follower",
-                    link: `https://problemspotter.com/user/details/${req.params.userId}`,
-                    date: new Date(),
-                    day: new Date().getDay(),
-                  },
-                },
-              }
-            )
-              .then()
-              .catch();
             res.status(200).json({
               message: "followed",
             });
@@ -334,7 +319,7 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
           });
       }
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         message: "User does not found",
       });
     }
@@ -648,6 +633,20 @@ router.patch("/statement/save/:userId", (req, res, next) => {
     });
 });
 ////////////////////////////////////
+router.get("/level/:id", (req, res) => {
+  User.find({ _id: ObjectId(req.params.id) }, { activity: true })
+    .then((result) => {
+      return res.status(200).json({
+        level: result[0].activity.length,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(400).json({
+        message: "something went wrong",
+      });
+    });
+});
 //////////////////////////////////////
 router.patch("/statement/remove/:userId", (req, res, next) => {
   const id = req.params.userId;
@@ -914,10 +913,19 @@ router.post("/login", (req, res, next) => {
             { _id: user[0]._id },
             {
               logInDetails: loginDetails,
+              $push: {
+                activity: {
+                  action: "login",
+                  link: `https://problemspotter.com/user/details/${user[0]._id}`,
+                  date: new Date(),
+                  day: new Date().getDay(),
+                },
+              },
             }
           )
             .then()
             .catch();
+
           const token = jwt.sign(
             {
               email: user[0].email,
