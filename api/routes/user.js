@@ -44,7 +44,7 @@ conn.once("open", () => {
 
 //////////////////////////////////////////////
 router.post(
-  "/signup/:userId",
+  "/signup",
   uploadSignUp.single("profileImage"),
   (req, res, next) => {
     User.find({ email: req.body.email })
