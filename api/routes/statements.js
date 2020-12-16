@@ -722,6 +722,21 @@ router.patch("/new/answer/:id", (req, res) => {
       });
     });
 });
+///////////////////////////////////
+// router.patch("/update/statement", (req, res) => {
+//   Statement.updateOne(
+//     { _id: ObjectId(req.body.id) },
+//     { $set: { statement: req.body.statement } }
+//   )
+//     .then((result) => {
+//       res.status(200).json({
+//         message: "updated",
+//       });
+//     })
+//     .catch((err) => {
+//       res.status(400).json(err);
+//     });
+// });
 
 ////////////////////////////////////////////////////////////
 module.exports = router;
