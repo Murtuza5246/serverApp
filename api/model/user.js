@@ -50,6 +50,7 @@ const userSchema = mongoose.Schema({
   numberVerified: { type: Boolean },
   number: { Type: String },
   canApprove: { type: Boolean },
+  notification: { type: Array },
 });
 
 const Order = mongoose.model("User", userSchema);

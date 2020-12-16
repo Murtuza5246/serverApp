@@ -12,6 +12,8 @@ let ObjectId = require("mongodb").ObjectID;
 const User = require("../model/user");
 const Statement = require("../model/statements");
 const Question = require("../model/question");
+const IdentifierPost = require("../model/identifierPost");
+const LearnerPost = require("../model/learner");
 
 const user = process.env.MONGO_PS;
 const password = process.env.MONGO_USER;
@@ -40,6 +42,53 @@ conn.once("open", () => {
   // Init stream
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection("uploads");
+});
+
+//////////////////////////////////////////////
+
+router.get("/notification/:id", (req, res) => {
+  User.find({ _id: ObjectId(req.params.id) }, { notification: true }).then(
+    (result) => {
+      return res.status(200).json(result[0].notification);
+    }
+  );
+});
+
+router.patch("/notification/reset/:userId", (req, res) => {
+  User.updateOne(
+    { _id: ObjectId(req.params.userId) },
+    { $set: { notification: [] } }
+  )
+    .then()
+    .catch();
+});
+
+//////////////////////////////////////////////
+
+router.get("/notificationCheck/:userId", (req, res) => {
+  let notificationCheckArray = [];
+  Statement.find({ userId: req.params.userId }, { _id: true })
+    .then((result) => {
+      for (let i = 0; i < result.length; i++) {
+        notificationCheckArray.push(result[i]);
+      }
+    })
+    .catch();
+  IdentifierPost.find({ userId: req.params.userId }, { _id: true })
+    .then((result1) => {
+      for (let i = 0; i < result1.length; i++) {
+        notificationCheckArray.push(result1[i]);
+      }
+    })
+    .catch();
+  LearnerPost.find({ userId: req.params.userId }, { _id: true })
+    .then((result2) => {
+      for (let i = 0; i < result2.length; i++) {
+        notificationCheckArray.push(result2[i]);
+      }
+      return res.status(200).json(notificationCheckArray.length);
+    })
+    .catch();
 });
 
 //////////////////////////////////////////////

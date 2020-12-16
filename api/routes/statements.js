@@ -340,9 +340,29 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
     { $push: { "comments.$.replies": req.body } }
   )
     .then((result) => {
-      return res.status(200).json({
+      res.status(200).json({
         message: "reply added",
       });
+      Statement.find({ _id: ObjectId(statementId) })
+        .then((someData) => {
+          if (someData.length !== 0)
+            if (someData[0].userId !== req.body.userId) {
+              User.updateOne(
+                { _id: ObjectId(req.body.userId) },
+                {
+                  $push: {
+                    notification: {
+                      title: `You got a comment for your post`,
+                      link: `/user/statement/id/${statementId}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              );
+            }
+        })
+        .catch();
     })
     .catch((err) => {
       console.log(err);
@@ -647,7 +667,7 @@ router.patch("/new/answer/:id", (req, res) => {
       }
       const comments = result.comments;
       comments.unshift(newQuestion);
-      Statement.update({ _id: id }, { $set: { comments: comments } })
+      Statement.update({ _id: id }, { $unshift: { comments: comments } })
         .exec()
         .then((result) => {
           User.updateOne(
@@ -665,6 +685,24 @@ router.patch("/new/answer/:id", (req, res) => {
           )
             .then()
             .catch();
+          /////updating item user
+          if (result.userId !== req.body.userId) {
+            User.updateOne(
+              { _id: ObjectId(result.userId) },
+              {
+                $push: {
+                  notification: {
+                    title: `You got a comment for your post`,
+                    link: `/user/statement/id/${id}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
+          }
           res.status(200).json({
             message: "Successfully updated",
           });

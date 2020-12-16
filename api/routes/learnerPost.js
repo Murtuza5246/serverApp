@@ -185,6 +185,28 @@ router.patch("/comment/:id", (req, res) => {
       )
         .then()
         .catch();
+      /////updating item user
+      LearnerPost.find({ _id: ObjectId(req.params.id) }, { userId: true })
+        .then((someData) => {
+          if (someData.length !== 0)
+            if (someData[0].userId !== req.body.userId)
+              User.updateOne(
+                { _id: ObjectId(someData[0].userId) },
+                {
+                  $push: {
+                    notification: {
+                      title: `You got a comment for your post`,
+                      link: `/statements?learnerPost=${req.params.id}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              )
+                .then()
+                .catch();
+        })
+        .catch();
     })
     .catch((err) => console.log(err));
 });
@@ -221,7 +243,7 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
           $push: {
             activity: {
               action: "post",
-              link: `https://problemspotter.com/statements?learnerPost=${statementId}`,
+              link: `/statements?learnerPost=${statementId}`,
               date: new Date(),
               day: new Date().getDay(),
             },
@@ -229,6 +251,28 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
         }
       )
         .then()
+        .catch();
+      /////updating item user
+      LearnerPost.find({ _id: ObjectId(statementId) }, { userId: true })
+        .then((someData) => {
+          if (someData.length !== 0)
+            if (someData[0].userId !== req.body.userId)
+              User.updateOne(
+                { _id: ObjectId(someData[0].userId) },
+                {
+                  $push: {
+                    notification: {
+                      title: `You got a reply for your post`,
+                      link: `/statements?learnerPost=${statementId}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              )
+                .then()
+                .catch();
+        })
         .catch();
     })
     .catch((err) => {
@@ -260,13 +304,33 @@ router.patch("/like/:postId/:userId", (req, res) => {
             res.status(200).json({
               message: "Liked",
             });
+
+            /////updating current user
+            if (result[0].userId !== req.params.userId) {
+              User.updateOne(
+                { _id: ObjectId(result[0].userId) },
+                {
+                  $push: {
+                    activity: {
+                      action: "post",
+                      link: `/statements?learnerPost=${req.params.postId}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              )
+                .then()
+                .catch();
+            }
+            /////updating item user
             User.updateOne(
-              { _id: ObjectId(req.params.userId) },
+              { _id: ObjectId(result[0].userId) },
               {
                 $push: {
-                  activity: {
-                    action: "post",
-                    link: `https://problemspotter.com/statements?learnerPost=${req.params.postId}`,
+                  notification: {
+                    title: `You got a like for your post`,
+                    link: `/statements?learnerPost=${req.params.postId}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },

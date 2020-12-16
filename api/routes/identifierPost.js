@@ -147,9 +147,45 @@ router.patch("/comment/:id", (req, res) => {
     { $push: { comments: { _id: new mongoose.Types.ObjectId(), ...req.body } } }
   )
     .then((result) => {
-      return res.status(200).json({
+      res.status(200).json({
         message: "Success",
       });
+      User.updateOne(
+        { _id: ObjectId(req.body.userId) },
+        {
+          $push: {
+            activity: {
+              action: "post",
+              link: `https://problemspotter.com/statements?posts=${req.params.id}`,
+              date: new Date(),
+              day: new Date().getDay(),
+            },
+          },
+        }
+      )
+        .then()
+        .catch();
+      /////updating item user
+      IdentifierPost.find({ _id: ObjectId(req.params.id) }, { userId: true })
+        .then((someData) => {
+          if (someData.length !== 0)
+            User.updateOne(
+              { _id: ObjectId(someData[0].userId) },
+              {
+                $push: {
+                  notification: {
+                    title: `You got a comment for your post`,
+                    link: `/statements?posts=${req.params.id}`,
+                    date: new Date(),
+                    day: new Date().getDay(),
+                  },
+                },
+              }
+            )
+              .then()
+              .catch();
+        })
+        .catch();
     })
     .catch((err) => console.log(err));
 });
@@ -177,9 +213,31 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
     { $push: { "comments.$.replies": req.body } }
   )
     .then((result) => {
-      return res.status(200).json({
+      res.status(200).json({
         message: "reply added",
       });
+      /////updating item user
+      IdentifierPost.find({ _id: ObjectId(statementId) }, { userId: true })
+        .then((someData) => {
+          if (someData.length !== 0)
+            if (someData[0].userId !== req.body.userId)
+              User.updateOne(
+                { _id: ObjectId(someData[0].userId) },
+                {
+                  $push: {
+                    notification: {
+                      title: `You got a reply for your post`,
+                      link: `/statements?learnerPost=${statementId}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              )
+                .then()
+                .catch();
+        })
+        .catch();
     })
     .catch((err) => {
       console.log(err);
@@ -207,9 +265,27 @@ router.patch("/like/:postId/:userId", (req, res) => {
           { $push: { likes: { userId: req.params.userId } } }
         )
           .then((result1) => {
-            return res.status(200).json({
+            res.status(200).json({
               message: "Liked",
             });
+            /////updating current user
+            if (result[0].userId !== req.params.userId) {
+              User.updateOne(
+                { _id: ObjectId(result[0].userId) },
+                {
+                  $push: {
+                    activity: {
+                      action: "post",
+                      link: `/statements?learnerPost=${req.params.postId}`,
+                      date: new Date(),
+                      day: new Date().getDay(),
+                    },
+                  },
+                }
+              )
+                .then()
+                .catch();
+            }
           })
           .catch();
       } else {
