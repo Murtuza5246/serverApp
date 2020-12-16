@@ -169,7 +169,7 @@ router.post(
                 pCode: req.body.pCode,
                 pString: req.body.pString,
                 experience: req.body.experience,
-                creationDate: req.body.creationDate,
+                creationDate: new Date(),
                 creationTime: req.body.creationTime,
                 savedStatements: [],
                 followers: [],
