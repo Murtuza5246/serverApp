@@ -667,7 +667,7 @@ router.patch("/new/answer/:id", (req, res) => {
       }
       const comments = result.comments;
       comments.unshift(newQuestion);
-      Statement.update({ _id: id }, { $unshift: { comments: comments } })
+      Statement.update({ _id: id }, { $set: { comments: comments } })
         .exec()
         .then((result) => {
           User.updateOne(
