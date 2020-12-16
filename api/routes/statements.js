@@ -2,19 +2,29 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require("multer");
-// const GridFsStorage = require("multer-gridfs-storage");
 const checkAuth = require("../middleWare/check-auth.js");
 const Statement = require("../model/statements");
 const User = require("../model/user");
-// const fileUpload = require("express-fileupload");
-// const Upload = require("../model/upload");
-// const app = express();
-// const upload = require("./imageUploadEngine");
+const Grid = require("gridfs-stream");
 const statementUpload = require("./statementImageUpload");
 const Question = require("../model/question.js");
-// const { json } = require("body-parser");
 const nodemailer = require("nodemailer");
 let ObjectId = require("mongodb").ObjectID;
+
+const user = process.env.MONGO_PS;
+const password = process.env.MONGO_USER;
+const DB = process.env.MONGO_DB;
+const mongoURI = `mongodb://${user}:${password}@cluster020-shard-00-00-ndanr.mongodb.net:27017,cluster020-shard-00-01-ndanr.mongodb.net:27017,cluster020-shard-00-02-ndanr.mongodb.net:27017/${DB}?ssl=true&replicaSet=cluster020-shard-0&authSource=admin&retryWrites=true`;
+const conn = mongoose.createConnection(mongoURI);
+
+// Init gfs
+let gfs;
+
+conn.once("open", () => {
+  // Init stream
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection("uploads");
+});
 
 let transporter = nodemailer.createTransport({
   host: "smtpout.secureserver.net",
@@ -605,6 +615,32 @@ router.patch("/pending/rejection/:pendingId", (req, res, next) => {
         message: "Something went wrong , Please try again later",
       });
     });
+});
+
+//////////////////////////////////////////////////////////////////
+
+router.patch("/pending/delete/:id", checkAuth, (req, res) => {
+  Statement.find({ _id: ObjectId(req.params.id) })
+    .then((result) => {
+      if (result.length !== 0) {
+        if (result[0].statementImage.length !== 0) {
+          for (let i = 0; i < result[0].statementImage.length; i++) {
+            gfs.remove({
+              _id: ObjectId(result[0].statementImage[i].id),
+              root: "uploads",
+            });
+          }
+        }
+        Statement.deleteOne({ _id: ObjectId(req.params.id) })
+          .then((result) => {
+            return res.status(200).json({
+              message: "Statement deleted successfully",
+            });
+          })
+          .catch((err) => console.log(err));
+      }
+    })
+    .catch((err) => console.log(err));
 });
 
 //////////////////////////////////////////////////////////////////
