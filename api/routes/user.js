@@ -93,7 +93,7 @@ router.get("/notificationCheck/:userId", (req, res) => {
 
 //////////////////////////////////////////////
 router.post(
-  "/signup",
+  "/signup/:someId",
   uploadSignUp.single("profileImage"),
   (req, res, next) => {
     User.find({ email: req.body.email })
@@ -178,6 +178,7 @@ router.post(
                 OName: req.body.OName,
                 OAddress: req.body.OAddress,
                 field: req.body.field,
+                notification: [],
                 emailVerified: false,
                 numberVerified: false,
                 canApprove: canApprove,
