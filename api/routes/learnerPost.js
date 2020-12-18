@@ -132,7 +132,10 @@ router.patch("/delete/:id/:userId", checkAuth, (req, res) => {
           message: "No post found",
         });
       }
-      if (result[0].userId === req.params.userId) {
+      if (
+        result[0].userId === req.params.userId ||
+        req.body.authType === "Admin"
+      ) {
         for (let i = 0; i < result[0].images.length; i++) {
           gfs.remove({
             _id: ObjectId(result[0].images[i].id),
@@ -383,7 +386,10 @@ router.patch("/privacy/:id/:userId", checkAuth, (req, res) => {
           message: "not found",
         });
       } else {
-        if (result[0].userId === req.params.userId) {
+        if (
+          result[0].userId === req.params.userId ||
+          req.body.authType === "Admin"
+        ) {
           if (result[0].onlyMe) {
             LearnerPost.updateOne(
               { _id: ObjectId(req.params.id) },
