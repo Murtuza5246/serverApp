@@ -55,6 +55,7 @@ router.post(
       userId,
       mentions,
       onlyMe,
+      youTubeLink,
     } = req.body;
 
     const identifierPost = new IdentifierPost({
@@ -71,6 +72,7 @@ router.post(
       likes: [],
       mentions: mentions,
       onlyMe: onlyMe,
+      youTubeLink: youTubeLink,
     });
     identifierPost
       .save()

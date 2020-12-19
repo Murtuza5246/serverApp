@@ -8,6 +8,7 @@ const identifierPostSchema = mongoose.Schema({
   comments: { type: Array },
   images: { type: Array },
   time: { type: String },
+  youTubeLink: { type: String },
   date: { type: String },
   authType: { type: String },
   userId: { type: String },

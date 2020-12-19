@@ -57,6 +57,7 @@ router.post(
       mentions,
       onlyMe,
       doing,
+      youTubeLink,
       at,
     } = req.body;
     let objectNewId = new mongoose.Types.ObjectId();
@@ -73,6 +74,7 @@ router.post(
       userId: userId,
       likes: [],
       mentions: mentions,
+      youTubeLink: youTubeLink,
       onlyMe: onlyMe,
       doing: doing,
       at: at,

@@ -9,6 +9,7 @@ const learnerPostSchema = mongoose.Schema({
   images: { type: Array },
   time: { type: String },
   date: { type: String },
+  youTubeLink: { type: String },
   authType: { type: String },
   userId: { type: String },
   doing: { type: String },
