@@ -139,7 +139,7 @@ router.post(
                   //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
                   html: `<h1>Hi ${
                     req.body.fName + "  " + req.body.lName
-                  }</h1><br/><p>Dear user of problemspotter.com , to use account features on problemspotter.com you first need to verify your email. <strong>The email verification link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for verification <strong><a href='problemspotter.com/account/authentication/${userId}/${emailKey}'  >problemspotter.com/account/authentication/${userId}/${emailKey}</a></strong></p><p>Love from problemspotter.com ❤</p>`,
+                  }</h1><br/><p>Dear user of problemspotter.com , to use account features on problemspotter.com you first need to verify your email. <strong>The email verification link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for verification <strong><a href='https://civil.problemspotter.com/account/authentication/${userId}/${emailKey}'  >problemspotter.com/account/authentication/${userId}/${emailKey}</a></strong></p><p>Love from problemspotter.com ❤</p>`,
                 },
                 function (error, info) {
                   if (error) {
@@ -253,7 +253,7 @@ router.patch("/about/update/:id", (req, res) => {
             from: "support@problemspotter.com",
             to: mentionString,
             subject: "Mentioned in About section",
-            html: `<h3>Hey there,</h3><h6>You got mentioned in someone's about section.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Check there about section by clicking <a href='https://problemspotter.com/user/details/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+            html: `<h3>Hey there,</h3><h6>You got mentioned in someone's about section.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Check there about section by clicking <a href='https://civil.problemspotter.com/user/details/userprofile/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
           },
           function (error, info) {
             if (error) {
@@ -347,9 +347,9 @@ router.patch("/follow/unFollow/:userId/:followersId", checkAuth, (req, res) => {
                 //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
                 html: `<h1>Hi ${
                   result2[0].fName + "  " + result2[0].lName + ","
-                }</h1><br/><p>Dear user of problemspotter.com , <a href="https://problemspotter.com/user/details/${
-                  req.body.userId
-                }" > ${
+                }</h1><br/><p>Dear user of problemspotter.com , <a href="https://civil.problemspotter.com/user/details/${req.body.name
+                  .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                  .replace(/ /g, "-")}/${req.body.userId}" > ${
                   req.body.name
                 }</a> has followed you. </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p> Checkout your profile on <a href="https://problemspotter.com/user/details/${
                   result2[0]._id
@@ -408,7 +408,7 @@ router.patch("/forget", (req, res) => {
             //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
             html: `<h1>Hi ${
               result[0].fName + "  " + result[0].lName
-            }</h1><br/><p>Dear user of problemspotter.com , You have made an forget password request from your account.<strong>The password reset link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for password reset <strong><a href='problemspotter.com/account/authentication/forget/${forgetKey}'  >problemspotter.com/account/authentication/forget/${forgetKey}</a></strong></p><p>if it was not you just ignore this email.</p><p>Love from problemspotter.com ❤</p>`,
+            }</h1><br/><p>Dear user of problemspotter.com , You have made an forget password request from your account.<strong>The password reset link is given below.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Link for password reset <strong><a href='https://civil.problemspotter.com/account/authentication/forget/${forgetKey}'  >problemspotter.com/account/authentication/forget/${forgetKey}</a></strong></p><p>if it was not you just ignore this email.</p><p>Love from problemspotter.com ❤</p>`,
           },
           function (error, info) {
             if (error) {
@@ -522,7 +522,7 @@ router.patch("/account/authentication/:id/:emailKey/:number", (req, res) => {
               //       The supporters like you is holding the civil field in technology era problemspotter.com/account/authentication/${userId}/${emailKey}`,
               html: `<h1>Hi ${
                 response.fName + "  " + response.lName
-              }</h1><br/><p>Dear user of problemspotter.com, your email verification on problemspotter.com is successfully completed. <strong>You can log into your account now.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Click on this link to log into you account <strong><a href='problemspotter.com/login'  >click here</a></strong></p><p>Love from problemspotter.com ❤</p>`,
+              }</h1><br/><p>Dear user of problemspotter.com, your email verification on problemspotter.com is successfully completed. <strong>You can log into your account now.</strong> </p><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><p>Click on this link to log into you account <strong><a href='https://civil.problemspotter.com/login'  >click here</a></strong></p><p>Love from problemspotter.com ❤</p>`,
             },
             function (error, info) {
               if (error) {
@@ -557,11 +557,15 @@ router.get("/all", (req, res) => {
             result[i].fName.toUpperCase() + " " + result[i].lName.toUpperCase(),
           name: result[i].fName + " " + result[i].lName + i,
           value: result[i].fName + " " + result[i].lName,
-          url: `https://problemspotter.com/user/details/${result[i]._id}`,
+          url: `https://civil.problemspotter.com/user/details/${
+            result[i].fName + "-" + result[i].lName
+          }/${result[i]._id}`,
           avatar: `https://my-server-problemspotter.herokuapp.com/image/profile/${result[i]._id}`,
 
           userId: result[i]._id,
-          link: `https://problemspotter.com/user/details/${result[i]._id}`,
+          link: `https://civil.problemspotter.com/user/details/${
+            result[i].fName + "-" + result[i].lName
+          }/${result[i]._id}`,
           email: result[i].email,
         });
       }
@@ -750,7 +754,7 @@ router.patch("/link/:action/:id", (req, res) => {
 ////////////////////////////////////
 
 router.patch("/update/rating/:id", (req, res) => {
-  User.findOne({ _id: req.params.id })
+  User.findOne({ _id: ObjectId(req.params.id) })
     .then((result) => {
       const userRatingArray = result.rating;
       const checkUserId = userRatingArray.filter(
@@ -772,7 +776,9 @@ router.patch("/update/rating/:id", (req, res) => {
                 $push: {
                   activity: {
                     action: "rating",
-                    link: `https://problemspotter.com/user/details/${req.params.id}`,
+                    link: `https://civil.problemspotter.com/user/details/${
+                      result.fName + "-" + result.lName
+                    }//${req.params.id}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },
@@ -800,7 +806,9 @@ router.patch("/update/rating/:id", (req, res) => {
                 $push: {
                   activity: {
                     action: "rating",
-                    link: `https://problemspotter.com/user/details/${req.params.id}`,
+                    link: `https://civil.problemspotter.com/user/details/${
+                      result.fName + "-" + result.lName
+                    }/${req.params.id}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },
@@ -966,7 +974,9 @@ router.post("/login", (req, res, next) => {
               $push: {
                 activity: {
                   action: "login",
-                  link: `https://problemspotter.com/user/details/${user[0]._id}`,
+                  link: `https://civil.problemspotter.com/user/details/${
+                    user[0].fName + "-" + user[0].lName
+                  }/${user[0]._id}`,
                   date: new Date(),
                   day: new Date().getDay(),
                 },

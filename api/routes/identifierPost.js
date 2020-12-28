@@ -161,7 +161,7 @@ router.patch("/comment/:id", (req, res) => {
           $push: {
             activity: {
               action: "post",
-              link: `https://problemspotter.com/statements?posts=${req.params.id}`,
+              link: `https://civil.problemspotter.com/statements?posts=${req.params.id}`,
               date: new Date(),
               day: new Date().getDay(),
             },

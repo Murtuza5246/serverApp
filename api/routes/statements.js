@@ -114,7 +114,12 @@ router.post(
               from: "support@problemspotter.com",
               to: mentionString,
               subject: "Mentioned in statement",
-              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://civil.problemspotter.com/statement/id/${req.body.title
+                .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                .replace(
+                  / /g,
+                  "-"
+                )}/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
             },
             function (error, info) {
               if (error) {
@@ -131,7 +136,9 @@ router.post(
             $push: {
               activity: {
                 action: "statement",
-                link: `https://problemspotter.com/user/statement/id/${id}`,
+                link: `https://civil.problemspotter.com/statement/id/${req.body.title
+                  .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                  .replace(/ /g, "-")}/${id}`,
                 date: new Date(),
                 day: new Date().getDay(),
               },
@@ -222,7 +229,12 @@ router.post(
               from: "support@problemspotter.com",
               to: mentionString,
               subject: "Mentioned in statement",
-              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+              html: `<h3>Hey there,</h3><h6>You got mentioned in a statement.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Whenever statement gets live, it will be  on <a href='https://civil.problemspotter.com/statement/id/${req.body.title
+                .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                .replace(
+                  / /g,
+                  "-"
+                )}/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
             },
             function (error, info) {
               if (error) {
@@ -239,7 +251,9 @@ router.post(
             $push: {
               activity: {
                 action: "statement",
-                link: `https://problemspotter.com/user/statement/id/${id}`,
+                link: `https://civil.problemspotter.com/statement/id/${req.body.title
+                  .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                  .replace(/ /g, "-")}/${id}`,
                 date: new Date(),
                 day: new Date().getDay(),
               },
@@ -308,7 +322,7 @@ router.patch("/updateFields/:id", checkAuth, (req, res) => {
   const id = req.params.id;
   const { updatedTitle, updatedContent } = req.body;
   Statement.update(
-    { _id: id },
+    { _id: ObjectId(id) },
     { $set: { title: updatedTitle, statement: updatedContent } }
   )
     .then((result) => {
@@ -318,7 +332,9 @@ router.patch("/updateFields/:id", checkAuth, (req, res) => {
           $push: {
             activity: {
               action: "statement",
-              link: `https://problemspotter.com/user/statement/id/${id}`,
+              link: `https://civil.problemspotter.com/statement/id/${updatedTitle
+                .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                .replace(/ /g, "-")}/${id}`,
               date: new Date(),
               day: new Date().getDay(),
             },
@@ -363,7 +379,9 @@ router.patch("/replies/:statementId/:commentId", (req, res) => {
                   $push: {
                     notification: {
                       title: `You got a comment for your post`,
-                      link: `/user/statement/id/${statementId}`,
+                      link: `/statement/id/${someData[0].title
+                        .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                        .replace(/ /g, "-")}/${statementId}`,
                       date: new Date(),
                       day: new Date().getDay(),
                     },
@@ -461,7 +479,7 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
           $push: {
             activity: {
               action: "statement",
-              link: `https://problemspotter.com/user/statement/id/${id}`,
+              link: `https://civil.problemspotter.com/statement/id/statementTile/${id}`,
               date: new Date(),
               day: new Date().getDay(),
             },
@@ -480,7 +498,13 @@ router.patch("/pending/approval/:pendingId", checkAuth, (req, res, next) => {
           subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
           //       The supporters like you is holding the civil field in technology era`,
-          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${
+            req.body.statementDetails.title
+          }"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='https://civil.problemspotter.com/statement/id/${req.body.statementDetails.title
+            .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+            .replace(/ /g, "-")}/${
+            req.body.statementDetails._id
+          }'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
         },
         function (error, info) {
           if (error) {
@@ -522,7 +546,7 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
           $push: {
             activity: {
               action: "statement",
-              link: `https://problemspotter.com/user/statement/id/${id}`,
+              link: `https://civil.problemspotter.com/statement/id/statementTitle/${id}`,
               date: new Date(),
               day: new Date().getDay(),
             },
@@ -541,7 +565,13 @@ router.patch("/pending/attention/:pendingId", checkAuth, (req, res, next) => {
           subject: "Statement is approved",
           // text: `Hi ${req.body.name}, the statement which you have uploaded on problemspotter is approved.
           //       The supporters like you is holding the civil field in technology era`,
-          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${req.body.statementDetails.title}"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='problemspotter.com//user/statement/id/${req.body.statementDetails._id}'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+          html: `<h1>Hi ${req.body.name}</h1><h3>The statement <strong>"${
+            req.body.statementDetails.title
+          }"</strong></h3><h4>is <strong style="color:green;text-align:center" >approved with high attention✅</strong></h4><br/><h4>your statement is marked as a high attention statement it means your statement will get a golden boarder on problemspotter.com </h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above statement is approved and now live on <a href='https://civil.problemspotter.com/statement/id/${req.body.statementDetails.title
+            .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+            .replace(/ /g, "-")}/${
+            req.body.statementDetails._id
+          }'>Click here</a></h3><br/><p>The contributor like you is holding the civil society in technology era hope that the statement written by you will be very helpful for the students who wants to earn something in their life😊</p><br/><p>Love from problemspotter.com ❤</p>`,
         },
         function (error, info) {
           if (error) {
@@ -597,7 +627,7 @@ router.patch("/pending/rejection/:pendingId", (req, res, next) => {
           $push: {
             activity: {
               action: "statement",
-              link: `https://problemspotter.com/user/statement/id/${id}`,
+              link: `https://civil.problemspotter.com/statement/id/statementTitle/${id}`,
               date: new Date(),
               day: new Date().getDay(),
             },
@@ -683,7 +713,7 @@ router.patch("/new/answer/:id", (req, res) => {
 
   Statement.findById(id)
     .exec()
-    .then((result) => {
+    .then((result1) => {
       let mentionedUsers = JSON.parse(req.body.mentions);
       if (mentionedUsers.length !== 0) {
         let mentionString = mentionedUsers.toString();
@@ -692,7 +722,12 @@ router.patch("/new/answer/:id", (req, res) => {
             from: "support@problemspotter.com",
             to: mentionString,
             subject: "Mentioned in statement comment",
-            html: `<h3>Hey there,</h3><h4>You got mentioned in a statement comment section.</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The statement is live  on <a href='https://problemspotter.com/user/statement/id/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+            html: `<h3>Hey there,</h3><h4>You got mentioned in a statement comment section.</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The statement is live  on <a href='https://civil.problemspotter.com/user/statement/id/${result1.title
+              .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+              .replace(
+                / /g,
+                "-"
+              )}/${id}'>here</a></h3><br/><p>Check what happened after it gets approved by one of our admin member.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
           },
           function (error, info) {
             if (error) {
@@ -703,7 +738,7 @@ router.patch("/new/answer/:id", (req, res) => {
           }
         );
       }
-      const comments = result.comments;
+      const comments = result1.comments;
       comments.unshift(newQuestion);
       Statement.update({ _id: id }, { $set: { comments: comments } })
         .exec()
@@ -714,7 +749,9 @@ router.patch("/new/answer/:id", (req, res) => {
               $push: {
                 activity: {
                   action: "statement",
-                  link: `https://problemspotter.com/user/statement/id/${id}`,
+                  link: `https://civil.problemspotter.com/statement/id/${result1.title
+                    .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                    .replace(/ /g, "-")}/${id}`,
                   date: new Date(),
                   day: new Date().getDay(),
                 },
@@ -726,12 +763,14 @@ router.patch("/new/answer/:id", (req, res) => {
           /////updating item user
           if (result.userId !== req.body.userId) {
             User.updateOne(
-              { _id: ObjectId(result.userId) },
+              { _id: ObjectId(result1.userId) },
               {
                 $push: {
                   notification: {
                     title: `You got a comment for your post`,
-                    link: `/user/statement/id/${id}`,
+                    link: `/statement/id/${result1.title
+                      .replace(/[&\/\\#,+()$~%.'":*?<>{}]/g, "")
+                      .replace(/ /g, "-")}/${id}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },

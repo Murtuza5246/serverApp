@@ -91,7 +91,7 @@ router.post(
             $push: {
               activity: {
                 action: "post",
-                link: `https://problemspotter.com/statements?learnerPost=${objectNewId}`,
+                link: `https://civil.problemspotter.com/statements?learnerPost=${objectNewId}`,
                 date: new Date(),
                 day: new Date().getDay(),
               },
@@ -181,7 +181,7 @@ router.patch("/comment/:id", (req, res) => {
           $push: {
             activity: {
               action: "post",
-              link: `https://problemspotter.com/statements?learnerPost=${req.params.id}`,
+              link: `https://civil.problemspotter.com/statements?learnerPost=${req.params.id}`,
               date: new Date(),
               day: new Date().getDay(),
             },

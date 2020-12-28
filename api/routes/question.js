@@ -53,7 +53,7 @@ router.post("/new/ask", (req, res, next) => {
                   from: "support@problemspotter.com",
                   to: mentionString,
                   subject: "Mentioned in question",
-                  html: `<h3>Hey there,</h3><h6>You got mentioned in a question.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>Check what happened.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+                  html: `<h3>Hey there,</h3><h6>You got mentioned in a question.</h6><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>The question is live on <a href='https://civil.problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>Check what happened.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
                 },
                 function (error, info) {
                   if (error) {
@@ -70,7 +70,7 @@ router.post("/new/ask", (req, res, next) => {
                 $push: {
                   activity: {
                     action: "question",
-                    link: `problemspotter.com/qanda?questionId=${_id}`,
+                    link: `https://civil.problemspotter.com/qanda?questionId=${_id}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },
@@ -88,7 +88,7 @@ router.post("/new/ask", (req, res, next) => {
                 to: email,
                 subject: "Question on problemspotter.com",
 
-                html: `<h1>Hi ${name},</h1><br/><h5>The question is uploaded.</h5><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+                html: `<h1>Hi ${name},</h1><br/><h5>The question is uploaded.</h5><h4>You will get notified once someone made a response to your thoughts</h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='https://civil.problemspotter.com/qanda/?questionId=${_id}'>here</a></h3><br/><p>The contributor like you is holding the civil society in technology era.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
               },
               function (error, info) {
                 if (error) {
@@ -188,7 +188,7 @@ router.patch("/comment/like/:questionId/:commentId/:userId", (req, res) => {
                 $push: {
                   activity: {
                     action: "question",
-                    link: `problemspotter.com/qanda?questionId=${questionId}`,
+                    link: `https://civil.problemspotter.com/qanda?questionId=${questionId}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },
@@ -242,7 +242,7 @@ router.patch("/likes/:questionId/:userId", checkAuth, (req, res) => {
                 $push: {
                   activity: {
                     action: "question",
-                    link: `problemspotter.com/qanda?questionId=${questionId}`,
+                    link: `https://civil.problemspotter.com/qanda?questionId=${questionId}`,
                     date: new Date(),
                     day: new Date().getDay(),
                   },
@@ -317,7 +317,7 @@ router.patch("/new/answer/:id", (req, res, next) => {
               $push: {
                 activity: {
                   action: "question",
-                  link: `problemspotter.com/qanda?questionId=${id}`,
+                  link: `https://civil.problemspotter.com/qanda?questionId=${id}`,
                   date: new Date(),
                   day: new Date().getDay(),
                 },
@@ -334,7 +334,7 @@ router.patch("/new/answer/:id", (req, res, next) => {
               from: "support@problemspotter.com",
               to: req.body.questionDetails.uploadedByEmail,
               subject: "Question-Answer on problemspotter.com",
-              html: `<h1>Hi ${req.body.questionDetails.uploadedByName}</h1><h3>The question </h3><h4>is got a response</h4><br/><h4>Check that out <a href='problemspotter.com/qanda?questionId=${req.body.questionDetails._id}' >here</a></h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='problemspotter.com/qanda/?questionId=${req.body.questionDetails._id}'>here</a></h3><br/><p>Hope you get your thoughts clear.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
+              html: `<h1>Hi ${req.body.questionDetails.uploadedByName}</h1><h3>The question </h3><h4>is got a response</h4><br/><h4>Check that out <a href='https://civil.problemspotter.com/qanda?questionId=${req.body.questionDetails._id}' >here</a></h4><img src='https://my-server-problemspotter.herokuapp.com/websiteLogo/newlogo.jpg' /><br/><h3>Your above question is live on <a href='https://civil.problemspotter.com/qanda/?questionId=${req.body.questionDetails._id}'>here</a></h3><br/><p>Hope you get your thoughts clear.😊</p><br/><p>Love from problemspotter.com ❤</p>`,
             },
             function (error, info) {
               if (error) {
